@@ -10,8 +10,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {},
   "devDependencies": {
-    "@cre.ative/cre-a-tive": "^1.1.0",
-    "@cre.ative/kram-elm": "^1.1.0",
-    "@cre.ative/kram-react-redux": "^1.1.0"
+    "@cre.ative/cre-a-tive": "^1.1.1",
+    "@cre.ative/kram-elm": "^1.1.1",
+    "@cre.ative/kram-react-redux": "^1.1.1"
   }
 }
