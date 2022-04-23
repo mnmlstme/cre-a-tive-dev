@@ -1,5 +1,5 @@
 {
-  "name": "cre-ative-dev",
+  "name": "cre-a-tive-dev",
   "version": "1.0.0",
   "description": "workspace for creative coding",
   "scripts": {
@@ -10,9 +10,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {},
   "devDependencies": {
-    "cre-a-tive": "file:.yalc/cre-a-tive",
-    "kram": "file:../kram",
-    "kram-elm": "file:.yalc/kram-elm",
-    "kram-react-redux": "file:.yalc/kram-react-redux"
+    "@cre.ative/cre-a-tive": "^1.1.0",
+    "@cre.ative/kram-elm": "^1.1.0",
+    "@cre.ative/kram-react-redux": "^1.1.0"
   }
 }

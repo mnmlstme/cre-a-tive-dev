@@ -1,5 +1,5 @@
 projects:
   MyProject: ./MyProject
 platforms:
-  react-redux: kram-react-redux
-  elm: kram-elm
+  react-redux: "@cre.ative/kram-react-redux"
+  elm: "@cre.ative/kram-elm"
