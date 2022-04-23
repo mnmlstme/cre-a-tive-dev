@@ -1,0 +1,80 @@
+---
+title: React Workbook
+platform: react-redux
+imports: []
+model:
+  count: 0
+  tenth: 0.1
+  hello: Hello, world
+---
+```jsx
+<p className="hi">{ hello }</p>
+
+
+
+
+
+```
+
+# Hello, World
+
+This workbook has **React** expressions
+which we evaluate.
+
+
+We can write documentation alongside the
+code to discuss what we're doing.
+
+
+## File Format: Kram
+
+All code and documentation for the workbook
+is maintained in a single file using `kram`,
+a text-based format that supports
+
+
+Code in multiple languages can be written in the same file.
+
+
+```css
+.hi {
+  font-family: Georgia;
+  color: #835cf0;
+  font-size: 4rem;
+}
+
+
+
+
+
+```
+
+The `react-redux` platform supports the following languages:
+
+---
+```jsx
+<input type="number" defaultValue={asString(count)}/>
+
+
+
+
+
+```
+
+## Functions
+
+We can put lots of views in the same file like this. We
+can also define helper functions. All helper functions in the
+workbook are available to every view.
+
+
+```jsx
+function asString(n) {
+  return String(n)
+}
+
+
+
+
+
+```

@@ -1,0 +1,7 @@
+workbooks:
+  - file: ElmWorkbook.kr
+    title: Elm Workbook
+    platform: elm
+  - file: ReactWorkbook.kr
+    title: React Workbook
+    platform: react-redux

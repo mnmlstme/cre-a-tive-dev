@@ -1,0 +1,5 @@
+projects:
+  MyProject: ./MyProject
+platforms:
+  react-redux: kram-react-redux
+  elm: kram-elm
