@@ -33,7 +33,7 @@ multiple languages of code in the same file.
 .hi {
   font-family: Impact;
   nice: 1;
-  color: #835cf0;
+  color: red;
   font-size: 4rem;
 }
 ```
@@ -44,7 +44,7 @@ The `react-redux` platform supports the following languages:
 * CSS3
 * Javascript (ES6)
 * JSX (Javascript/React)
-* SVG
+* SVG 1.1
 
 ---
 ```jsx
