@@ -8,7 +8,7 @@ model:
   hello: Hello, world
 ---
 ```jsx
-<p className="hi">{ hello }</p>
+<p className="hi">{hello}</p>
 ```
 
 # Hello, World
@@ -32,23 +32,24 @@ multiple languages of code in the same file.
 ```css
 .hi {
   font-family: Impact;
-  nice: 1;
-  color: red;
-  font-size: 4rem;
+  text-align: center;
+  width: 100%;
+  color: orange;
+  font-size: 96px;
 }
 ```
 
 The `react-redux` platform supports the following languages:
 
-* HTML5
-* CSS3
-* Javascript (ES6)
-* JSX (Javascript/React)
-* SVG 1.1
+- HTML5
+- CSS3
+- Javascript (ES6)
+- JSX (Javascript/React)
+- SVG 1.1
 
 ---
 ```jsx
-<input type="number" defaultValue={asString(count)}/>
+<input type="number" defaultValue={asString(count)} />
 ```
 
 ## Functions
@@ -58,6 +59,6 @@ workbook are available to every view.
 
 ```jsx
 function asString(n) {
-  return String(n)
+  return String(n);
 }
 ```

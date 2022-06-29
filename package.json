@@ -5,14 +5,13 @@
   "scripts": {
     "start": "cre-a-tive ./projects",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf node_modules kram_modules elm-stuff dist"
+    "clean": "rm -rf package-lock.json node_modules kram_modules elm-stuff dist"
   },
   "author": "ken@mnmlst.me",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@cre.ative/kram": "^1.2.2",
-    "@cre.ative/cre-a-tive": "^1.2.1",
-    "@cre.ative/kram-elm": "^1.1.1",
-    "@cre.ative/kram-react-redux": "^1.1.1"
+    "@cre.ative/cre-a-tive": "^1.2.2",
+    "@cre.ative/kram-elm": "^1.2.0",
+    "@cre.ative/kram-react-redux": "^1.2.0"
   }
 }
