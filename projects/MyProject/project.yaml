@@ -1,7 +1,4 @@
 workbooks:
-  - file: ElmWorkbook.md
-    title: Elm Workbook
-    platform: elm
-  - file: ReactWorkbook.md
-    title: React Workbook
+  - file: ReactFigma.md
+    title: React-Figma Demo
     platform: react-redux

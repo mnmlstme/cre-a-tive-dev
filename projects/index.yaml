@@ -2,4 +2,3 @@ projects:
   MyProject: ./MyProject
 platforms:
   react-redux: "@cre.ative/kram-react-redux"
-  elm: "@cre.ative/kram-elm"
