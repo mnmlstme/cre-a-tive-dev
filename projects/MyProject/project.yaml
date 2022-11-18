@@ -1,4 +1,4 @@
 workbooks:
   - file: ReactFigma.md
     title: React-Figma Demo
-    platform: react-redux
+    platform: react-native

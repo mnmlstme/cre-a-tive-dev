@@ -1,4 +1,4 @@
 projects:
   MyProject: ./MyProject
 platforms:
-  react-redux: "@cre.ative/kram-react-redux"
+  react-native: "@cre.ative/kram-react-native"

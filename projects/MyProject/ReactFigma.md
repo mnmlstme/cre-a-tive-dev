@@ -1,10 +1,10 @@
 ---
 title: React-Figma Demo
-platform: react-redux
+platform: react-native
 imports:
-  - from: react-figma
+  - from: react-native
     expose:
-      - Frame
+      - StyleSheet
       - Text
       - View
 model:
@@ -33,23 +33,8 @@ Figma components are completely specified.
 # A Simple `Tag` Component
 
 ```jsx
-<View>
-  <Frame
-    style={{
-      backgroundColor: "#423248",
-      paddingVertical: 4,
-      paddingHorizontal: 8,
-    }}
-  >
-    <Text
-      style={{
-        color: "white",
-        fontFamily: 'Verdana, Futura, "Trebuchet MS", sans-serif',
-      }}
-    >
-      Tag Text
-    </Text>
-  </Frame>
+<View style={tagStyles.root}>
+  <Text style={tagStyles.content}>Tag Text</Text>
 </View>
 ```
 
@@ -68,3 +53,17 @@ We need a way to describe a design which can have multiple implementations on va
 in such a way that abstracts out the platform dependencies and focuses on what's common between them.
 React is flexible enough, and there is tooling available to render to the web, native iOS/Android, as well as
 Figma (through `react-figma`).
+
+```jsx
+const tagStyles = StyleSheet.create({
+  root: {
+    backgroundColor: "#423248",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  content: {
+    color: "white",
+    fontFamily: 'Verdana, Futura, "Trebuchet MS", sans-serif',
+  },
+});
+```
