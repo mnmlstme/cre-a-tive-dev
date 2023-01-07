@@ -3,16 +3,21 @@
   "version": "1.1.1",
   "description": "workspace for creative coding",
   "scripts": {
-    "start": "cre-a-tive ./projects",
+    "dev": "cre-a-tive --dev ./projects",
+    "start": "cre-a-tive --serve ./projects",
+    "publish": "cre-a-tive --publish ./projects",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf package-lock.json node_modules kram_modules elm-stuff dist"
+    "clean": "rm -rf package-lock.json node_modules kram_modules elm-stuff dist public"
   },
   "author": "ken@mnmlst.me",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@cre.ative/cre-a-tive": "^1.3.9",
+    "@cre.ative/cre-a-tive": "^1.3.11",
     "@cre.ative/kram-elm": "^1.3.1",
     "@cre.ative/kram-react-native": "^1.3.4",
     "@cre.ative/kram-react-redux": "^1.3.5"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.0"
   }
 }
