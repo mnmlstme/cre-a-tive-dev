@@ -1,7 +1,9 @@
 workbooks:
   - file: ReactFigma.md
     title: React-Figma Demo
+    slug: react-figma-demo
     platform: react-native
   - file: StyleHarmful.md
     title: "`Style` considered harmful"
+    slug: style-harmful
     platform: react-redux
