@@ -1,6 +1,6 @@
 {
   "name": "cre-a-tive-dev",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "workspace for creative coding",
   "scripts": {
     "dev": "cre-a-tive --dev ./projects",
@@ -12,9 +12,9 @@
   "author": "ken@mnmlst.me",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@cre.ative/cre-a-tive": "^1.3.15",
-    "@cre.ative/kram-elm": "^1.3.1",
+    "@cre.ative/cre-a-tive": "^1.3.17",
+    "@cre.ative/kram-elm": "^1.3.2",
     "@cre.ative/kram-react-native": "^1.3.4",
-    "@cre.ative/kram-react-redux": "^1.3.5"
+    "@cre.ative/kram-react-redux": "^1.3.6"
   }
 }

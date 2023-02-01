@@ -8,6 +8,28 @@ model:
 
 # `style` Considered Harmful
 
+```jsx
+<section>
+  <p>
+    <button>This is a Button</button>
+  </p>
+  <p>
+    <button
+      style={{
+        background: "rebeccapurple",
+        border: "0.5em dashed",
+        color: "white",
+        fontSize: "24px",
+        fontFamily: "Impact",
+        margin: "2em auto",
+      }}
+    >
+      But so is this
+    </button>
+  </p>
+</section>
+```
+
 It's long been considered that using inline CSS (i.e., the `style` property) in HTML is poor practice. Here are just two discussion threads:
 
 - [Stack Overflow: What's so bad about in-line CSS?](https://stackoverflow.com/questions/2612483/whats-so-bad-about-in-line-css)
@@ -29,6 +51,41 @@ That's not to say it isn't possible to keep the concerns separate using CSS-in-J
 ---
 
 ## HTML `style` vs React `style`
+
+```jsx
+<section>
+  <p>
+    <V1.Button
+      style={{
+        background: "rebeccapurple",
+        border: "4px dashed",
+        borderRadius: "1em",
+        color: "white",
+        fontSize: "24px",
+        height: "2em",
+        margin: "2em auto",
+      }}
+    >
+      This used to work in Version 1
+    </V1.Button>
+  </p>
+  <p>
+    <V2.Button
+      style={{
+        background: "rebeccapurple",
+        border: "4px dashed",
+        borderRadius: "1em",
+        color: "white",
+        fontSize: "24px",
+        height: "2em",
+        margin: "2em auto",
+      }}
+    >
+      But I upgraded to Version 2 and now I get this
+    </V2.Button>
+  </p>
+</section>
+```
 
 What is the difference between the `style` attribute in HTML and defining a React component to accept a `style` property? In HTML, the impact of every possible value of the `style` property is documented and standardized. Standards change slowly, and such changes are always backward-compatible. So if an app developer adds a `style` to an HTML element, they can be sure it will continue to do the same thing for a long time. As long as they don't change something else in the application code, the presentation will never change.
 
@@ -70,6 +127,7 @@ const V1 = {
   display: inline-block;
   padding: 0 16px;
   line-height: 22px;
+  background: #f0f0f0;
   border: 2px solid;
   border-radius: 4px;
 }
@@ -81,7 +139,8 @@ const V1 = {
 
 ```jsx
 <p>
-  Here is our original <V1.Button>{btnText}</V1.Button> and inline-modified{" "}
+  Here is our original <V1.Button>{btnText}</V1.Button> and
+  inline-modified{" "}
   <V1.Button
     style={{
       border: "4px solid red",
@@ -106,7 +165,8 @@ We can't subtract the extra `2px` from `0`, so we also need to change `line-
 
 ```jsx
 <p>
-  Here is our updated <V2.Button>{btnText}</V2.Button> and modified{" "}
+  Here is our updated <V2.Button>{btnText}</V2.Button> and
+  modified{" "}
   <V2.Button
     style={{
       border: "4px solid red",
@@ -120,7 +180,7 @@ We can't subtract the extra `2px` from `0`, so we also need to change `line-
 </p>
 ```
 
-Now let's say the `Button` component is reimplemented. To simplify the calculations for padding, the library maintainers have decided to use generated content (the `::after` pseudo-element) to place the border on top of the button so it does not interact with the padding.
+Now let's say the `Button` component is reimplemented. To simplify the calculations for padding, the library maintainers have decided to use generated content (the `::before` pseudo-element) to place the border on top of the button so it does not interact with the padding.
 
 Here is the updated CSS for Button:
 
@@ -141,18 +201,21 @@ const V2 = {
   padding: 4px 16px;
   line-height: 18px;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
+  z-index: 0; /* create stacking context */
 }
 
-.button_v2::after {
+.button_v2::before {
   content: "";
   position: absolute;
   left: 0;
   top: 0;
   right: 0;
   bottom: 0;
+  background: #f0f0f0;
   border: 2px solid;
-  border-radius: inherit;
+  border-radius: 4px;
+  z-index: -1; /* behind the content of the button */
 }
 ```
 
@@ -180,7 +243,8 @@ There are also legitimate uses of `className` that cannot be distinguished from 
 
 ```jsx
 <p>
-  Here is our updated <V3.Button>{btnText}</V3.Button> and modified{" "}
+  Here is our updated <V3.Button>{btnText}</V3.Button> and
+  modified{" "}
   <V3.Button
     style={{
       // Here we only set custom properties
@@ -255,7 +319,8 @@ Another advantage is that CSS variables are inherited. Since the variables are d
 
 ```jsx
 <p>
-  Here is our standard <V4.Button>{btnText}</V4.Button> and customized{" "}
+  Here is our standard <V4.Button>{btnText}</V4.Button> and
+  customized{" "}
   <V4.Button
     customize={{
       "border-thickness": "4px",
@@ -285,7 +350,10 @@ Here is an example of a `Button` component that provides customization points fo
 ```jsx
 const customizeStyle = (comp, params = {}) =>
   Object.fromEntries(
-    Object.entries(params).map(([prop, value]) => [`--${comp}-${prop}`, value])
+    Object.entries(params).map(([prop, value]) => [
+      `--${comp}-${prop}`,
+      value,
+    ])
   );
 
 const CustomButton = (args = {}) => (

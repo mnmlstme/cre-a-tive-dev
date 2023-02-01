@@ -3,3 +3,4 @@ projects:
 platforms:
   react-native: "@cre.ative/kram-react-native"
   react-redux: "@cre.ative/kram-react-redux"
+  elm: "@cre.ative/kram-elm"

@@ -7,3 +7,7 @@ workbooks:
     title: "`Style` considered harmful"
     slug: style-harmful
     platform: react-redux
+  - file: ElmIntro.md
+    title: Introduction to Elm
+    slug: elm-intro
+    platform: elm
