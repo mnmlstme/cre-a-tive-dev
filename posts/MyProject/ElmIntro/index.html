@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<title>Introduction to Elm</title>
+<link rel="stylesheet" href="/styles/theme.css">
+</head>
+<body>
+<kram-main>
+<kram-nav>
+<span slot="title">Introduction to Elm
+</span></kram-nav>
+<kram-flow>
+<kram-scene scene="0"></kram-scene>
+<kram-code data-language="auto"><code lang="elm" class="language-elm">Html.div [ class "hi" ]
+  [Html.text hello]
+
+</code></kram-code>
+<kram-narrative><h1>Introduction</h1>
+
+<p>We can write Html expressions in Elm and have them rendered.</p>
+
+<h3>subtitle</h3>
+
+<p>We can also pull in CSS classes and reference them using the <code data-mark-around="`">class</code> attribute.</p>
+
+<kram-code data-language="css"><code class="language-css">.hi {
+  font-family: Georgia;
+  color: #835cf0;
+  font-size: 4rem;
+}
+</code></kram-code></kram-narrative>
+<kram-scene scene="1"></kram-scene>
+<kram-code data-language="auto"><code lang="elm" class="language-elm">Html.input
+  [ Attr.type_ "number"
+  , Attr.value &lt;| asString count
+  ]
+  []
+</code></kram-code>
+<kram-narrative><h1>Functions</h1>
+
+<p>We can put lots of examples in the same file like this.</p>
+
+<p>We can also define “helper” functions to make the view more
+concise.</p>
+
+<kram-code data-language="elm"><code class="language-elm">asString: Int -&gt; String
+asString n =
+  String.fromInt n
+</code></kram-code>
+<p>Alternatively, we can use views to test or demo the functions
+that we define in the same file.</p>
+</kram-narrative>
+</kram-flow>
+</kram-main>
+<script type="module">
+
+    const initialState = {"count":999,"tenth":0.1,"hello":"Hello, world"};
+    import("./modules/Main.elm.module.js").then((mod) => mount(mod, "./Main.elm", "kram-mountpoint"));
+import("./modules/styles.css.module.js").then((mod) => mount(mod, "./styles.css", "kram-mountpoint"));
+    function mount (mod, name, mountpoint) {
+      let render = (n, container) => {
+        console.log("Cannot render scene; module not mounted:", name);
+      };
+
+      try {
+        const mountElement = document.getElementById(mountpoint);
+        render = mod.mount(mountElement, initialState);
+        console.log("Module mounted:", name);
+      } catch (err) {
+        console.log("Warning: module not mounted", name, err);
+      }
+
+      return render;
+    }
+</script>
+
+
+</body>
+</html>

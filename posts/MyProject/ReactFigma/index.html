@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<title>React-Figma Demo</title>
+<link rel="stylesheet" href="/styles/theme.css">
+</head>
+<body>
+<kram-main>
+<kram-nav>
+<span slot="title">React-Figma Demo
+</span></kram-nav>
+<kram-flow>
+<kram-scene scene="0"></kram-scene>
+<kram-code data-language="auto"><code lang="jsx" class="language-jsx"><text classname="hi">Hello, {name}</text>
+</code></kram-code>
+<kram-narrative><h1>Hello, Figma</h1>
+
+<p>This workbook demonstrates how we can use React to build
+components and frames in Figma. The focus is on using React
+as the <strong data-mark-around="**">Single Source of Truth</strong> for a design system,
+including components, styles, and design tokens.</p>
+
+<p>We will build React components in this workbook and then
+use <a href="https://github.com/react-figma/react-figma">react-figma</a>
+to inject them into a Figma file as components.
+This will allow us to prove out the component APIs and ensure the
+Figma components are completely specified.</p>
+</kram-narrative>
+<kram-scene scene="1"></kram-scene>
+<kram-code data-language="auto"><code lang="jsx" class="language-jsx"><view style="{tagStyles.root}">
+  <text style="{tagStyles.content}">Tag Text</text>
+</view>
+</code></kram-code>
+<kram-narrative><h1>A Simple <code data-mark-around="`">Tag</code> Component</h1>
+
+<p>Whenever we say “component”, it may be unclear whether we’re talking
+about a <a href="https://reactjs.org/docs/react-component.html">React component</a> or a
+<a href="https://help.figma.com/hc/en-us/articles/360038662654-Guide-to-components-in-Figma">Figma component</a>.
+This can cause a good deal of confusion and miscommunication between Design and Engineering
+teams.</p>
+
+<p>Here we’re taking a more abstract and implementation-dependent approach. We are not developing
+production-ready React components. We are developing a <em data-mark-around="_">specification</em> or <em data-mark-around="_">prototype</em>
+for each of the components.</p>
+
+<p>The choice of React for this representation is somewhat arbitrary.
+We need a way to describe a design which can have multiple implementations on various platforms,
+in such a way that abstracts out the platform dependencies and focuses on what’s common between them.
+React is flexible enough, and there is tooling available to render to the web, native iOS/Android, as well as
+Figma (through <code data-mark-around="`">react-figma</code>).</p>
+
+<kram-code data-language="jsx"><code class="language-jsx">const tagStyles = StyleSheet.create({
+  root: {
+    backgroundColor: "#423248",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  content: {
+    color: "white",
+    fontFamily: 'Verdana, Futura, "Trebuchet MS", sans-serif',
+  },
+});
+</code></kram-code></kram-narrative>
+</kram-flow>
+</kram-main>
+<script type="module">
+
+    const initialState = {"name":"Figma"};
+    import("./modules/index.jsx.module.js").then((mod) => mount(mod, "./index.jsx", "kram-mountpoint"));
+    function mount (mod, name, mountpoint) {
+      let render = (n, container) => {
+        console.log("Cannot render scene; module not mounted:", name);
+      };
+
+      try {
+        const mountElement = document.getElementById(mountpoint);
+        render = mod.mount(mountElement, initialState);
+        console.log("Module mounted:", name);
+      } catch (err) {
+        console.log("Warning: module not mounted", name, err);
+      }
+
+      return render;
+    }
+</script>
+
+
+</body>
+</html>

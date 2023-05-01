@@ -1,7 +1,7 @@
 ---
 title: Introduction to Elm
 platform: elm
-imports: []
+imports:
 model:
   count: 999
   tenth: 0.1
