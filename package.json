@@ -2,6 +2,7 @@
   "name": "cre-a-tive-dev",
   "version": "1.5.0",
   "description": "workspace for creative coding",
+  "type": "commonjs",
   "scripts": {
     "publish": "npx @11ty/eleventy",
     "start": "npx @11ty/eleventy --serve",
@@ -10,6 +11,7 @@
   "author": "ken@mnmlst.me",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "@cre.ative/kram": "file:.yalc/@cre.ative/kram",
     "http-server": "^14.1.1",
     "immutable": "^4.3.0",
     "react-redux": "^8.0.5",
@@ -18,7 +20,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-plugin-webc": "^0.11.1",
-    "@cre.ative/kram-11ty": "^1.5.0",
+    "@cre.ative/kram-11ty": "file:.yalc/@cre.ative/kram-11ty",
     "@cre.ative/kram-elm": "^1.5.0",
     "@cre.ative/kram-react-native": "^1.5.0",
     "@cre.ative/kram-react-redux": "^1.5.0"

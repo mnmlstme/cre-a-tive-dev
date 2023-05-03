@@ -1,5 +1,4 @@
 const kram11ty = require("@cre.ative/kram-11ty");
-const pluginWebc = require("@11ty/eleventy-plugin-webc");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 
@@ -9,17 +8,6 @@ module.exports = function (eleventyConfig) {
     "src/styles": "styles",
   });
   eleventyConfig.addPassthroughCopy("projects/**/FILES/*.*");
-
-  eleventyConfig.addPlugin(pluginWebc, {
-    // (The default changed from `false` in Eleventy WebC v0.7.0)
-    // components: "src/components/cre-ative/*.webc",
-
-    // Adds an Eleventy WebC transform to process all HTML output
-    useTransform: true,
-
-    // Additional global data used in the Eleventy WebC transform
-    transformData: {},
-  });
 
   // Override Markdown parser to Kram
   eleventyConfig.addExtension(
