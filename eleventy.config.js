@@ -1,4 +1,5 @@
 const kram11ty = require("@cre.ative/kram-11ty");
+const EleventyVitePlugin = require("@11ty/eleventy-plugin-vite");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 
@@ -9,6 +10,12 @@ module.exports = function (eleventyConfig) {
   });
   eleventyConfig.addPassthroughCopy("projects/**/FILES/*.*");
 
+  eleventyConfig.addPlugin(EleventyVitePlugin, {
+    viteOptions: {
+      configFile: "./vite.config.js",
+    },
+  });
+
   // Override Markdown parser to Kram
   eleventyConfig.addExtension(
     "md",
@@ -18,13 +25,11 @@ module.exports = function (eleventyConfig) {
       template: "./src/template/post.html",
       platforms: {
         "react-redux": "@cre.ative/kram-react-redux",
-        "react-native": "@cre.ative/kram-react-native",
         elm: "@cre.ative/kram-elm",
       },
     })
   );
 
-  // Return your Object options:
   return {
     dir: {
       input: "projects/",

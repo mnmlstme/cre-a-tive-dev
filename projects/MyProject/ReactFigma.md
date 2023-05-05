@@ -1,12 +1,7 @@
 ---
 title: React-Figma Demo
-platform: react-native
+platform: react-redux
 imports:
-  - from: react-native
-    expose:
-      - StyleSheet
-      - Text
-      - View
 model:
   name: Figma
 ---

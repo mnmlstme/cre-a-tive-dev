@@ -1,32 +1,19 @@
-// module Kram_160b9720_ReactFigma (JSX)
+// module Kram_9bff2aa8_ReactFigma (JSX)
 import React from 'react'
-import { AppRegistry } from 'react-native'
+import { createRoot } from 'react-dom/client'
 const Redux = require('redux')
 import Im from 'immutable'
 import { Provider, connect } from 'react-redux'
-import {StyleSheet,Text,View} from 'react-native'
-
-const tagStyles = StyleSheet.create({
-  root: {
-    backgroundColor: "#423248",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  content: {
-    color: "white",
-    fontFamily: 'Verdana, Futura, "Trebuchet MS", sans-serif',
-  },
-});
 
 
-const Program = ({ name }) => ({
-  "0": () => (<><Text className="hi">Hello, {name}</Text>
-</>),
-"1": () => (<><View style={tagStyles.root}>
-  <Text style={tagStyles.content}>Tag Text</Text>
-</View>
-</>)
-})
+
+export function Program (css) {
+  
+
+  return ({ name }) => ({
+    
+  })
+}
 
 const mapStateToProps = state =>
   ( {
@@ -39,15 +26,15 @@ export function mount (mountpoint, initial) {
   const store = Redux.createStore(update)
   const props = Object.assign(
     mapStateToProps(store.getState()),
-    {dispatch: store.dispatch}
+    { dispatch: store.dispatch }
   )
+  const css = typeof CssModule !== "undefined" ? CssModule.locals : {}
 
-  const krumbs = Program(props)
+  const krumbs = Program(css)(props)
 
   return (n, container) => {
-    const appname = ['Scene', n].join('-')
-    AppRegistry.registerComponent(appname, () => krumbs[n-1])
-    AppRegistry.runApplication(appname, { rootTag: container })
+    const root = createRoot(container)
+    root.render(React.createElement(krumbs[n-1]), container)
   }
 
   function update (state = init, action = {}) {
