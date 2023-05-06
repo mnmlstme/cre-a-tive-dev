@@ -42,6 +42,8 @@ true&&(function polyfill() {
     }
 }());
 
+const styles = '';
+
 const scriptRel = 'modulepreload';const assetsURL = function(dep) { return "/"+dep };const seen = {};const __vitePreload = function preload(baseModule, deps, importerUrl) {
     // @ts-expect-error true will be replaced with boolean later
     if (!true || !deps || deps.length === 0) {
@@ -92,16 +94,38 @@ const scriptRel = 'modulepreload';const assetsURL = function(dep) { return "/"+d
 
 let mountElement = null;
 let state = {};
+let registry = {};
 
-function init(initialState, mountpoint = "kram-mountpoint") {
+function init(initialState, mountpoint) {
   Object.assign(state, initialState);
-  mountElement = document.getElementById(mountpoint);
+  mountElement =
+    (mountpoint && document.getElementById(mountpoint)) ||
+    document.body.appendChild(document.createElement("div"));
   customElements.define("kram-main", MainElement);
   customElements.define("kram-scene", SceneElement);
 }
 
-function register(module, name) {
-  mount(module, name);
+function register(module, name, language, bindFn) {
+  const render = mount(module, name, bindFn);
+  if (language && render) {
+    const { pending = [] } = registry[language] || {};
+    registry[language] = { name, module, render };
+    console.log(`[kram-11ty] '${language}' scenes rendered from`, name, render);
+    pending.map((resolve) => resolve(render));
+  }
+}
+
+function whenCanRender(language) {
+  return new Promise((resolve, reject) => {
+    const reg = registry[language];
+    if (reg && reg.render) {
+      resolve(reg.render);
+    } else if (reg && reg.pending) {
+      reg.pending.push(resolve);
+    } else {
+      registry[language] = { pending: [resolve] };
+    }
+  });
 }
 
 function mount(mod, name, bindfn) {
@@ -117,7 +141,7 @@ function mount(mod, name, bindfn) {
     } else {
       render = () => null;
     }
-    console.log("Module mounted:", name);
+    console.log("Module mounted:", name, render);
   } catch (err) {
     console.log("Warning: module not mounted", name, err);
   }
@@ -127,6 +151,35 @@ function mount(mod, name, bindfn) {
 
 class MainElement extends HTMLElement {}
 
-class SceneElement extends HTMLElement {}
+class SceneElement extends HTMLElement {
+  constructor() {
+    super();
+
+    let shadowRoot = this.attachShadow({ mode: "open" });
+    shadowRoot.innerHTML = `
+      <section>
+        <figure id="rendering">
+          <slot name="rendering">Nothing rendered (yet).</slot>
+        </figure>
+        <main>
+          <slot>Discussion</slot>
+        </main>
+      </section>`;
+  }
+
+  connectedCallback() {
+    const scnum = this.getAttribute("scene");
+    const lang = this.getAttribute("language");
+    const slot = document.createElement("div");
+
+    slot.setAttribute("slot", "rendering");
+    this.appendChild(slot);
+
+    whenCanRender(lang).then((render) => {
+      console.log(`Rendering scene (${lang}):`, scnum);
+      render(parseInt(scnum), slot);
+    });
+  }
+}
 
 export { __vitePreload as _, init as i, register as r };
