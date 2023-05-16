@@ -1,4 +1,4 @@
-import { i as init, _ as __vitePreload, r as register } from './runtime-5be9f52a.js';
+import { i as init, _ as __vitePreload, r as register } from './runtime-13566f40.js';
 
 init({"name":"Figma"});
   

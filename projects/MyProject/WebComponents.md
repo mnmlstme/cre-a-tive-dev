@@ -3,10 +3,6 @@ title: Web Components
 platform: web-standard
 ---
 
-```html
-<hello-world></hello-world>
-```
-
 # Hello, world
 
 Here is "Hello, world" implemented as a web component.
@@ -15,13 +11,14 @@ Notice that all we need to do is reference the `<hello-world>` element in our HT
 But… _searches HTML standard…_ where did this new `<hello-world>` element come from?
 And why does it have a hyphen in the name?
 
+```html
+<hello-world></hello-world>
+```
+
 The answer is that we've defined an HTML
 [custom element](https://html.spec.whatwg.org/multipage/custom-elements.html)
 and all custom elements are required to contain a hyphen in the name.
 This is to ensure that custom element names do not conflict with yet-to-be-defined HTML tags in the future.
-
-We define a custom element in HTML using the `<template>` HTML element.
-Inside the template we put whatever HTML we want to have inserted whenever the custom element is used.
 
 ```html
 <template id="hello-world-template">
@@ -29,33 +26,40 @@ Inside the template we put whatever HTML we want to have inserted whenever the c
 </template>
 ```
 
-There's one more thing we need, and that is to bind our template to the tag name `hello-world` by
-registering a Javascript `class` and attaching our template in its `constuctor`.
+We define a custom element in HTML using the `<template>` HTML element.
+Inside the template we put whatever HTML we want to have inserted whenever the custom element is used.
 
 ```js
 class HelloWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("hello-world-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "hello-world-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define("hello-world", HelloWorldElement);
 ```
 
+There's one more thing we need, and that is to bind our template to the tag name `hello-world` by
+registering a Javascript `class` and attaching our template in its `constuctor`.
+
 ---
 
 # Slots
-
-```html
-<hello-world> web components </hello-world>
-```
 
 Notice that the template for `<hello-world>` includes `<slot>` markup.
 Slots allow us to swap out different content each time the component is used.
 In this case, the `<slot>` contains the word "world", so we can use this same
 template to say hello to anything.
+
+```html
+<hello-world> web components </hello-world>
+```
 
 A slot can be thought of as a parameter to the component.
 Every time we use the component, we can assign a different value to the slot
@@ -65,14 +69,14 @@ by putting that value in the body of the component.
 
 # Styling the template
 
+By inserting a `<style>` element inside our template, we can apply CSS to elements
+in the template without affecting anything outside our component.
+
 ```html
 <hello-style> component style </hello-style>
 
 <h1>This &lt;H1&gt; has no style</h1>
 ```
-
-By inserting a `<style>` element inside our template, we can apply CSS to elements
-in the template without affecting anything outside our component.
 
 ```html
 <template id="hello-style-template">
@@ -92,23 +96,31 @@ in the template without affecting anything outside our component.
 </template>
 ```
 
-Remember, every time we define a new component, we need this boilerplate:
-
 ```js
 class HelloStyleElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("hello-style-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "hello-style-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define("hello-style", HelloStyleElement);
 ```
 
+Remember, every time we define a new component, we need this boilerplate:
+
 ---
 
 # Named Slots
+
+Just as a function can have more than one parameter,
+a component template can contain more than one `<slot>`.
+To distinguish between multiple slots, the slots need to have a `name` attribute.
 
 ```html
 <greet-world>
@@ -117,14 +129,18 @@ customElements.define("hello-style", HelloStyleElement);
 </greet-world>
 ```
 
-Just as a function can have more than one parameter,
-a component template can contain more than one `<slot>`.
-To distinguish between multiple slots, the slots need to have a `name` attribute.
+To assign content to a named slot, we need to put it in an element that has a `slot` attribute.
+The value of the `slot` attribute needs to match the `name` attribute of a slot
+in the template.
+There can be at most one unnamed slot in a template definition.
+Any untagged text, or elements with no `slot` attribute, will be added to
+the unnamed slot, it it exists.
 
 ```html
 <template id="greet-world-template">
   <h1>
-    <slot name="greeting">Hello</slot>, <slot name="recipient">world</slot>!
+    <slot name="greeting">Hello</slot>,
+    <slot name="recipient">world</slot>!
   </h1>
 
   <style>
@@ -141,13 +157,6 @@ To distinguish between multiple slots, the slots need to have a `name` attribute
 </template>
 ```
 
-To assign content to a named slot, we need to put it in an element that has a `slot` attribute.
-The value of the `slot` attribute needs to match the `name` attribute of a slot
-in the template.
-There can be at most one unnamed slot in a template definition.
-Any untagged text, or elements with no `slot` attribute, will be added to
-the unnamed slot, it it exists.
-
 We are using `<span>` for the slot value, because the `<slot>` occurs in the middle of text.
 Using something other than a span may change the styling or even result in invalid markup.
 
@@ -155,8 +164,12 @@ Using something other than a span may change the styling or even result in inval
 class GreetWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("greet-world-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "greet-world-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
@@ -167,6 +180,9 @@ customElements.define("greet-world", GreetWorldElement);
 
 # Custom Attributes
 
+Components can be defined to accept attributes, even attributes
+that do not exist in standard HTML5.
+
 ```html
 <arrow-button></arrow-button>
 <arrow-button heading="90deg"></arrow-button>
@@ -175,8 +191,13 @@ customElements.define("greet-world", GreetWorldElement);
 <arrow-button heading="45deg"></arrow-button>
 ```
 
-Components can be defined to accept attributes, even attributes
-that do not exist in standard HTML5.
+Here we are using the CSS `transform` property to rotate the arrow icon.
+On the CSS for our component, we've defined a custom property `--arrow-rotation`
+and then referenced that in the CSS rule for the `svg`.
+The last step is to copy the value of the `heading` attribute into the
+`--arrow-rotation` property.
+This cannot be done in the template, so we have to add some code to the
+Javascript class that defines our custom element.
 
 ```html
 <template id="arrow-button-template">
@@ -202,18 +223,17 @@ that do not exist in standard HTML5.
 </template>
 ```
 
-Here we are using the CSS `transform` property to rotate the arrow icon.
-On the CSS for our component, we've defined a custom property `--arrow-rotation`
-and then referenced that in the CSS rule for the `svg`.
-The last step is to copy the value of the `heading` attribute into the
-`--arrow-rotation` property.
-This cannot be done in the template, so we have to add some code to the
-Javascript class that defines our custom element.
-
 We already have written the `constructor` for that class, but there is no
 way to access the host element's attributes from the constructor.
 Instead we need to use the _lifecycle callbacks_ that are provided to
 us by the Web Components API.
+
+The `connectedCallback` function is invoked each time the custom element
+is connected to a host element. In a static page, this will happen only once.
+But if the DOM is being manipulated such that the host element is moved,
+`connectedCallback` will be called again.
+Because `connectedCallback` is a member function of our custom element
+class, it can access the host element via `this`.
 
 ```js
 class ArrowButtonElement extends HTMLElement {
@@ -223,8 +243,12 @@ class ArrowButtonElement extends HTMLElement {
 
   constructor() {
     super();
-    let content = document.getElementById("arrow-button-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "arrow-button-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 
   connectedCallback() {
@@ -250,16 +274,17 @@ class ArrowButtonElement extends HTMLElement {
 customElements.define("arrow-button", ArrowButtonElement);
 ```
 
-The `connectedCallback` function is invoked each time the custom element
-is connected to a host element. In a static page, this will happen only once.
-But if the DOM is being manipulated such that the host element is moved,
-`connectedCallback` will be called again.
-Because `connectedCallback` is a member function of our custom element
-class, it can access the host element via `this`.
-
 ---
 
 # An Interactive Component
+
+We can define a component in HTML, and style it with CSS, but to be really useful, our component needs the ability to do something. We need to implement some interactions, and to do that, we will need Javascript.
+
+Let's implement a dropdown menu, like the **File** menu in most desktop applications.
+There are two parts to the dropdown component:
+
+1. an _actuator_ which identifies the menu and provides an affordance for the user to open it, and
+2. the _menu_ itself, a list of actions from which the user may select.
 
 ```html
 <section>
@@ -286,17 +311,9 @@ class, it can access the host element via `this`.
 </section>
 ```
 
-We can define a component in HTML, and style it with CSS, but to be really useful, our component needs the ability to do something. We need to implement some interactions, and to do that, we will need Javascript.
-
-Let's implement a dropdown menu, like the **File** menu in most desktop applications.
-There are two parts to the dropdown component:
-
-1. an _actuator_ which identifies the menu and provides an affordance for the user to open it, and
-2. the _menu_ itself, a list of actions from which the user may select.
-
 So our component will have two slots.
 The _menu_ content will always require markup, so we will make it
-a named slot. Since the _actuator_ will often be untagged text, which makes it a good choice for
+a named slot. Since the _actuator_ will often be untagged text, it is a good choice for
 the unnamed slot.
 
 First, we'll define a template, and some styling to handle hiding and revealing the menu. We'll use a checkbox to maintain the open/closed state, and wrapping the `<label>` for the checkbox around the actuator will allow it to control the open/closed state. No Javascript is required here.
@@ -356,13 +373,25 @@ First, we'll define a template, and some styling to handle hiding and revealing 
 
 The logic for closing the menu when the user clicks outside the menu can be applied from the component's constructor, since we have a `this` handle.
 
+Whenever the user clicks outside of our component, we want to close the menu.
+Since all clicks on the page eventually propagate up to the document element,
+we can listen for `"click"` events on `document`.
+But clicks within our component will also propagate to `document`.
+To check whether the event came from somewhere inside the component, we get the `composedPath`
+of the event and check whether it includes our component.
+
 ```js
 class V1DropdownElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("dropdown-menu-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
-    this.isShownInput = this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById(
+      "dropdown-menu-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
+    this.isShownInput =
+      this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -386,20 +415,16 @@ class V1DropdownElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener("click", this.clickawayHandler);
+      document.removeEventListener(
+        "click",
+        this.clickawayHandler
+      );
     }
   }
 }
 
 customElements.define("dropdown-menu", V1DropdownElement);
 ```
-
-Whenever the user clicks outside of our component, we want to close the menu.
-Since all clicks on the page eventually propagate up to the document element,
-we can listen for `"click"` events on `document`.
-But clicks within our component will also propagate to `document`.
-To check whether the event came from somewhere inside the component, we get the `composedPath`
-of the event and check whether it includes our component.
 
 If the click came from outside our component, we will close the menu by setting
 `checked = false` on the checkbox.
@@ -548,9 +573,14 @@ Let's design a `<command-menu>` component and refactor `<dropdown-menu>`` to del
 class DropdownBaseElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("dropdown-base-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
-    this.isShownInput = this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById(
+      "dropdown-base-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
+    this.isShownInput =
+      this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -574,7 +604,10 @@ class DropdownBaseElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener("click", this.clickawayHandler);
+      document.removeEventListener(
+        "click",
+        this.clickawayHandler
+      );
     }
   }
 }
@@ -659,16 +692,24 @@ command-group + command-group {
 class CommandMenuElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("command-menu-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "command-menu-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 class CommandGroupElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("command-group-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "command-group-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
@@ -710,8 +751,12 @@ The `<action-item>` component was originally designed to be an item in a command
 class ActionItemElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById("action-item-template").content;
-    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      "action-item-template"
+    ).content;
+    this.attachShadow({ mode: "open" }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 

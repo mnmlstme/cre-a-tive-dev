@@ -6,14 +6,42 @@
 { "imports": {"@cre.ative/kram-11ty/runtime":"/modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"/modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
 <link rel="stylesheet" href="/modules/@cre.ative/kram-11ty/styles.css">
+<script type="module">
+import {init, register} from "@cre.ative/kram-11ty/runtime";
+init({"btnText":"Button"});
+import("./index.jsx")
+          .then((mod) => register(mod, "index.jsx", "jsx", null))
+import("./styles.css")
+          .then((mod) => register(mod, "styles.css", "css", null))
+</script>
 </head>
 <body>
 <kram-main>
-<kram-nav>
-<span slot="title">`style` Considered Harmful</title>
-</kram-nav>
+<h1 slot="title">`style` Considered Harmful</h1>
 <kram-flow>
-<kram-scene scene="0" language="jsx"><h1><code data-mark-around="`">style</code> Considered Harmful</h1>
+<kram-scene scene="1" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;section&gt;
+  &lt;p&gt;
+    &lt;button&gt;This is a Button&lt;/button&gt;
+  &lt;/p&gt;
+  &lt;p&gt;
+    &lt;button
+      style={{
+        background: &quot;rebeccapurple&quot;,
+        border: &quot;0.5em dashed&quot;,
+        color: &quot;white&quot;,
+        fontSize: &quot;24px&quot;,
+        fontFamily: &quot;Impact&quot;,
+        margin: &quot;2em auto&quot;,
+      }}
+    &gt;
+      But so is this
+    &lt;/button&gt;
+  &lt;/p&gt;
+&lt;/section&gt;
+</code></kram-code><h1 slot="title"><code data-mark-around="`">style</code> Considered Harmful</h1>
 
 <p>It&rsquo;s long been considered that using inline CSS (i.e., the&nbsp;<code data-mark-around="`">style</code>&nbsp;property) in HTML is poor practice. Here are just two discussion threads:</p>
 
@@ -41,20 +69,62 @@
 
 <p>That&rsquo;s not to say it isn&rsquo;t possible to keep the concerns separate using CSS-in-JS. But it takes more discipline. Imagine a system where all style declarations are maintained in separate&nbsp;<code data-mark-around="`">*.css.js</code>&nbsp;files, which&nbsp;<code data-mark-around="`">export</code>&nbsp;JS constants for all the &ldquo;classes&rdquo;. At this point, however, one may as well write straight CSS and use&nbsp;<a href="https://www.npmjs.com/package/postcss-modules">postcss-modules</a>&nbsp;to enable the classes to be&nbsp;<code data-mark-around="`">import</code>ed as JS.</p>
 </kram-scene>
-<kram-scene scene="1" language="jsx"><h2>HTML <code data-mark-around="`">style</code> vs React <code data-mark-around="`">style</code></h2>
+<kram-scene scene="2" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;section&gt;
+  &lt;p&gt;
+    &lt;V1.Button
+      style={{
+        background: &quot;rebeccapurple&quot;,
+        border: &quot;4px dashed&quot;,
+        borderRadius: &quot;1em&quot;,
+        color: &quot;white&quot;,
+        fontSize: &quot;24px&quot;,
+        height: &quot;2em&quot;,
+        margin: &quot;2em auto&quot;,
+      }}
+    &gt;
+      This used to work in Version 1
+    &lt;/V1.Button&gt;
+  &lt;/p&gt;
+  &lt;p&gt;
+    &lt;V2.Button
+      style={{
+        background: &quot;rebeccapurple&quot;,
+        border: &quot;4px dashed&quot;,
+        borderRadius: &quot;1em&quot;,
+        color: &quot;white&quot;,
+        fontSize: &quot;24px&quot;,
+        height: &quot;2em&quot;,
+        margin: &quot;2em auto&quot;,
+      }}
+    &gt;
+      But I upgraded to Version 2 and now I get this
+    &lt;/V2.Button&gt;
+  &lt;/p&gt;
+&lt;/section&gt;
+</code></kram-code><h2>HTML <code data-mark-around="`">style</code> vs React <code data-mark-around="`">style</code></h2>
 
 <p>What is the difference between the&nbsp;<code data-mark-around="`">style</code>&nbsp;attribute in HTML and defining a React component to accept a&nbsp;<code data-mark-around="`">style</code>&nbsp;property? In HTML, the impact of every possible value of the&nbsp;<code data-mark-around="`">style</code>&nbsp;property is documented and standardized. Standards change slowly, and such changes are always backward-compatible. So if an app developer adds a&nbsp;<code data-mark-around="`">style</code>&nbsp;to an HTML element, they can be sure it will continue to do the same thing for a long time. As long as they don&rsquo;t change something else in the application code, the presentation will never change.</p>
 
 <p>But the same cannot be said of a&nbsp;<code data-mark-around="`">style</code>&nbsp;property on a React component. This is because the impact of the&nbsp;<code data-mark-around="`">style</code>&nbsp;on the component is not documented and no guarantee can be made that it will have the same effect in future versions of the component. As a result, if an app developer adds a&nbsp;<code data-mark-around="`">style</code>&nbsp;to a React element, they cannot be sure this code will continue to work in the future. Any time the React component (which is in a library they don&rsquo;t control) changes, there is the possibility the presentation will change,&nbsp;<em data-mark-around="*">even if they never change the application code</em>.</p>
 </kram-scene>
-<kram-scene scene="2" language="jsx"><h2>A Simple Example: <code data-mark-around="`">Button</code></h2>
+<kram-scene scene="3" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;p&gt;
+  Here is our original &lt;V1.Button&gt;{btnText}&lt;/V1.Button&gt;.
+&lt;/p&gt;
+</code></kram-code><h2>A Simple Example: <code data-mark-around="`">Button</code></h2>
 
 <p>To show just how likely this is to happen, let&rsquo;s take at a simple implementation of a button, apply a&nbsp;<code data-mark-around="`">style</code>&nbsp;inline, and then look at other ways&nbsp;<code data-mark-around="`">&lt;Button&gt;</code>&nbsp;could be defined that would change the way the&nbsp;<code data-mark-around="`">style</code>&nbsp;property impacts the presentation.</p>
 
 <p>Here is the original <code data-mark-around="`">&lt;Button&gt;</code> code:</p>
 
-<kram-code data-language="jsx">
-        <code class="language-jsx">const UnstyledButton = (args) =&gt; (
+<kram-code data-language="jsx"
+        ><code class="language-jsx"
+          >const UnstyledButton = (args) =&gt; (
   // NOTE: NOT recommended to pass &grave;style&grave; prop
   &lt;button className={args.className} style={args.style}&gt;
     {args.children}
@@ -69,8 +139,9 @@ const V1 = {
   ),
 };
 </code></kram-code>
-<kram-code data-language="css">
-        <code class="language-css">.button_v1 {
+<kram-code data-language="css"
+        ><code class="language-css"
+          >.button_v1 {
   display: inline-block;
   padding: 0 16px;
   line-height: 22px;
@@ -79,21 +150,56 @@ const V1 = {
   border-radius: 4px;
 }
 </code></kram-code></kram-scene>
-<kram-scene scene="3" language="jsx"><h2>Inline <code data-mark-around="`">style</code> on <code data-mark-around="`">Button</code></h2>
+<kram-scene scene="4" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;p&gt;
+  Here is our original &lt;V1.Button&gt;{btnText}&lt;/V1.Button&gt; and
+  inline-modified{&quot; &quot;}
+  &lt;V1.Button
+    style={{
+      border: &quot;4px solid red&quot;,
+      padding: &quot;0 14px&quot;,
+      lineHeight: &quot;18px&quot;,
+    }}
+  &gt;
+    {btnText}
+  &lt;/V1.Button&gt;
+  .
+&lt;/p&gt;
+</code></kram-code><h2>Inline <code data-mark-around="`">style</code> on <code data-mark-around="`">Button</code></h2>
 
 <p>Now let&rsquo;s try adding an inline style. Let&rsquo;s say we want the outline to be 4px thick, but we don&rsquo;t want the overall size of the button to change.</p>
 
 <p>Inspecting the CSS, we see that the padding is currently&nbsp;<code data-mark-around="`">0</code>&nbsp;vertically and&nbsp;<code data-mark-around="`">16px</code>&nbsp;horizontally.
 We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbsp;from&nbsp;<code data-mark-around="`">0</code>, so we also need to change&nbsp;<code data-mark-around="`">line-height</code>&nbsp;from&nbsp;<code data-mark-around="`">22px</code>&nbsp;to&nbsp;<code data-mark-around="`">18px</code>.We will also make the border red.</p>
 </kram-scene>
-<kram-scene scene="4" language="jsx"><h2>Revised <code data-mark-around="`">Button</code> in library</h2>
+<kram-scene scene="5" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;p&gt;
+  Here is our updated &lt;V2.Button&gt;{btnText}&lt;/V2.Button&gt; and
+  modified{&quot; &quot;}
+  &lt;V2.Button
+    style={{
+      border: &quot;4px solid red&quot;,
+      padding: &quot;0 14px&quot;,
+      lineHeight: &quot;18px&quot;,
+    }}
+  &gt;
+    {btnText}
+  &lt;/V2.Button&gt;
+  .
+&lt;/p&gt;
+</code></kram-code><h2>Revised <code data-mark-around="`">Button</code> in library</h2>
 
 <p>Now let&rsquo;s say the&nbsp;<code data-mark-around="`">Button</code>&nbsp;component is reimplemented. To simplify the calculations for padding, the library maintainers have decided to use generated content (the&nbsp;<code data-mark-around="`">::before</code>&nbsp;pseudo-element) to place the border on top of the button so it does not interact with the padding.</p>
 
 <p>Here is the updated CSS for Button:</p>
 
-<kram-code data-language="jsx">
-        <code class="language-jsx">const V2 = {
+<kram-code data-language="jsx"
+        ><code class="language-jsx"
+          >const V2 = {
   Button: (args) =&gt; (
     &lt;UnstyledButton className={css.button_v2} {...args}&gt;
       {args.children}
@@ -101,8 +207,9 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
   ),
 };
 </code></kram-code>
-<kram-code data-language="css">
-        <code class="language-css">.button_v2 {
+<kram-code data-language="css"
+        ><code class="language-css"
+          >.button_v2 {
   display: inline-block;
   position: relative;
   padding: 4px 16px;
@@ -131,7 +238,8 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
 
 <p>This is how opening up the <code data-mark-around="`">style</code> property can lead to unexpected results in application code, and maintenance effort for the library team.</p>
 </kram-scene>
-<kram-scene scene="5" language="null"><h2>But isn&rsquo;t <code data-mark-around="`">className</code> just as bad?</h2>
+<kram-scene scene="6" language="null"
+        ><h2>But isn&rsquo;t <code data-mark-around="`">className</code> just as bad?</h2>
 
 <p>Similar problems can arise when using <code data-mark-around="`">className</code> to override the styling of a component. The main reason why this is not as worrisome is that to override <code data-mark-around="`">className</code>, application developers need to create a CSS class. Whether they do it using a CSS file, <code data-mark-around="`">styled-components</code>, <code data-mark-around="`">tailwind</code>, etc, the CSS is part of a class or component <em data-mark-around="_">definition</em>, not a component <em data-mark-around="_">instance</em>.</p>
 
@@ -147,7 +255,24 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
 </li>
 </ul>
 </kram-scene>
-<kram-scene scene="6" language="jsx"><h2>Use CSS custom properties, not inline <code data-mark-around="`">style</code></h2>
+<kram-scene scene="7" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;p&gt;
+  Here is our updated &lt;V3.Button&gt;{btnText}&lt;/V3.Button&gt; and
+  modified{&quot; &quot;}
+  &lt;V3.Button
+    style={{
+      // Here we only set custom properties
+      &quot;--button-border-thickness&quot;: &quot;4px&quot;,
+      &quot;--button-border-color&quot;: &quot;red&quot;,
+    }}
+  &gt;
+    {btnText}
+  &lt;/V3.Button&gt;
+  .
+&lt;/p&gt;
+</code></kram-code><h2>Use CSS custom properties, not inline <code data-mark-around="`">style</code></h2>
 
 <p>Depending on the component, there may be some CSS properties that need to be modified by the consuming application. This often happens when the application wants to control the placement or layout of a component.</p>
 
@@ -161,8 +286,9 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
 
 <p>Let&rsquo;s go back to the <code data-mark-around="`">Button</code> example, and see how we might use CSS variables to make a forward-compatible interface that allows modifying the thickness and color of the border. For now, let&rsquo;s work in CSS only, and not modify the React component. We will still need to set the <code data-mark-around="`">style</code> property, but only for setting CSS variables.</p>
 
-<kram-code data-language="jsx">
-        <code class="language-jsx">const V3 = {
+<kram-code data-language="jsx"
+        ><code class="language-jsx"
+          >const V3 = {
   Button: (args) =&gt; (
     &lt;UnstyledButton className={css.button_v3} {...args}&gt;
       {args.children}
@@ -170,8 +296,9 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
   ),
 };
 </code></kram-code>
-<kram-code data-language="css">
-        <code class="language-css">:root {
+<kram-code data-language="css"
+        ><code class="language-css"
+          >:root {
   --button-border-thickness: 2px;
   --button-border-color: currentColor;
 }
@@ -202,7 +329,23 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
 
 <p>Another advantage is that CSS variables are inherited. Since the variables are declared in <code data-mark-around="`">:root</code>, their values can be modified at any level of the DOM. So if we apply the <code data-mark-around="`">style</code> to the <code data-mark-around="`">p</code>, every button inside would be affected.</p>
 </kram-scene>
-<kram-scene scene="7" language="jsx"><h2>Using CSS Variables with React</h2>
+<kram-scene scene="8" language="jsx"
+        ><kram-code slot="scenecode" data-language="jsx"
+          ><code lang="jsx" class="language-jsx"
+            >&lt;p&gt;
+  Here is our standard &lt;V4.Button&gt;{btnText}&lt;/V4.Button&gt; and
+  customized{&quot; &quot;}
+  &lt;V4.Button
+    customize={{
+      &quot;border-thickness&quot;: &quot;4px&quot;,
+      &quot;border-color&quot;: &quot;red&quot;,
+    }}
+  &gt;
+    {btnText}
+  &lt;/V4.Button&gt;
+  .
+&lt;/p&gt;
+</code></kram-code><h2>Using CSS Variables with React</h2>
 
 <p>While CSS variables give us a way to allow safe modification of component properties, we still need to pass them through the <code data-mark-around="`">style</code> property, which allows all CSS properties to be modified. While we could filter the <code data-mark-around="`">style</code> prop before passing it down, this might be confusing to app developers.</p>
 
@@ -228,8 +371,9 @@ We can&rsquo;t subtract the extra&nbsp;<code data-mark-around="`">2px</code>&nbs
 
 <p>Here is an example of a <code data-mark-around="`">Button</code> component that provides customization points for the border color and thickness:</p>
 
-<kram-code data-language="jsx">
-        <code class="language-jsx">const customizeStyle = (comp, params = {}) =&gt;
+<kram-code data-language="jsx"
+        ><code class="language-jsx"
+          >const customizeStyle = (comp, params = {}) =&gt;
   Object.fromEntries(
     Object.entries(params).map(([prop, value]) =&gt; [
       &grave;--${comp}-${prop}&grave;,
@@ -260,15 +404,5 @@ const V4 = {
 </kram-scene>
 </kram-flow>
 </kram-main>
-<script type="module">
-
-    import {register, init} from "@cre.ative/kram-11ty/runtime";
-    init({"btnText":"Button"});
-  
-import("./index.jsx")
-          .then((mod) => register(mod, "index.jsx", "jsx", null))
-import("./styles.css")
-          .then((mod) => register(mod, "styles.css", "css", null))
-</script>
 </body>
 </html>

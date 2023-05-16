@@ -6,14 +6,60 @@
 { "imports": {"@cre.ative/kram-11ty/runtime":"/modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"/modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
 <link rel="stylesheet" href="/modules/@cre.ative/kram-11ty/styles.css">
+<script type="module">
+import {init, register} from "@cre.ative/kram-11ty/runtime";
+init({});
+import("./templates.html")
+          .then((mod) => register(mod, "templates.html", "html", (resource, container) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(resource.default, 'text/html');
+            const body = doc.body;
+            for ( let def = body.firstElementChild; def; def=body.firstElementChild ) {
+              container.appendChild(def); }
+          }))
+import("./scenes.html")
+          .then((mod) => register(mod, "scenes.html", "html", (resource, container) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(resource.default, 'text/html');
+            const body = doc.body;
+            const scenes = Object.fromEntries(
+              Array.prototype.map.call(body.children, (node) => [
+              node && node.dataset.scene, node ])
+              .filter(([num]) => Boolean(num)));
+            return function render (n, container) {
+              const scene = scenes[n]
+              if( scene ) {
+                for( let child = scene.firstElementChild; child; child = scene.firstElementChild ) {
+                  if ( child.tagName === 'SCRIPT' ) {
+                    const text = child.firstChild
+                    scene.removeChild(child)
+                    child = document.createElement('script')
+                    child.appendChild(text)
+                  } 
+                  container.appendChild(child) 
+                }
+              } 
+            }
+          }))
+import("./styles.css")
+          .then((mod) => register(mod, "styles.css", "css", (resource, container) => {
+          let sheet = document.createElement("style");
+          sheet.innerHTML = resource.default;
+          container.appendChild(sheet);
+        }))
+import("./module.js")
+          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", null))
+</script>
 </head>
 <body>
 <kram-main>
-<kram-nav>
-<span slot="title">Web Components</title>
-</kram-nav>
+<h1 slot="title">Web Components</h1>
 <kram-flow>
-<kram-scene scene="0" language="html"><h1>Hello, world</h1>
+<kram-scene scene="1" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;hello-world&gt;&lt;/hello-world&gt;
+</code></kram-code><h1 slot="title">Hello, world</h1>
 
 <p>Here is &ldquo;Hello, world&rdquo; implemented as a web component.
 Notice that all we need to do is reference the <code data-mark-around="`">&lt;hello-world&gt;</code> element in our HTML.</p>
@@ -26,29 +72,39 @@ And why does it have a hyphen in the name?</p>
 and all custom elements are required to contain a hyphen in the name.
 This is to ensure that custom element names do not conflict with yet-to-be-defined HTML tags in the future.</p>
 
-<p>We define a custom element in HTML using the <code data-mark-around="`">&lt;template&gt;</code> HTML element.
-Inside the template we put whatever HTML we want to have inserted whenever the custom element is used.</p>
-
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;hello-world-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;hello-world-template&quot;&gt;
   &lt;h1&gt;Hello, &lt;slot&gt;world&lt;/slot&gt;!&lt;/h1&gt;
 &lt;/template&gt;
 </code></kram-code>
-<p>There&rsquo;s one more thing we need, and that is to bind our template to the tag name <code data-mark-around="`">hello-world</code> by
-registering a Javascript <code data-mark-around="`">class</code> and attaching our template in its <code data-mark-around="`">constuctor</code>.</p>
+<p>We define a custom element in HTML using the <code data-mark-around="`">&lt;template&gt;</code> HTML element.
+Inside the template we put whatever HTML we want to have inserted whenever the custom element is used.</p>
 
-<kram-code data-language="js">
-        <code class="language-js">class HelloWorldElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class HelloWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;hello-world-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;hello-world-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define(&quot;hello-world&quot;, HelloWorldElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="1" language="html"><h1>Slots</h1>
+</code></kram-code>
+<p>There&rsquo;s one more thing we need, and that is to bind our template to the tag name <code data-mark-around="`">hello-world</code> by
+registering a Javascript <code data-mark-around="`">class</code> and attaching our template in its <code data-mark-around="`">constuctor</code>.</p>
+</kram-scene>
+<kram-scene scene="2" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;hello-world&gt; web components &lt;/hello-world&gt;
+</code></kram-code><h1 slot="title">Slots</h1>
 
 <p>Notice that the template for <code data-mark-around="`">&lt;hello-world&gt;</code> includes <code data-mark-around="`">&lt;slot&gt;</code> markup.
 Slots allow us to swap out different content each time the component is used.
@@ -59,13 +115,20 @@ template to say hello to anything.</p>
 Every time we use the component, we can assign a different value to the slot
 by putting that value in the body of the component.</p>
 </kram-scene>
-<kram-scene scene="2" language="html"><h1>Styling the template</h1>
+<kram-scene scene="3" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;hello-style&gt; component style &lt;/hello-style&gt;
+
+&lt;h1&gt;This &amp;lt;H1&amp;gt; has no style&lt;/h1&gt;
+</code></kram-code><h1 slot="title">Styling the template</h1>
 
 <p>By inserting a <code data-mark-around="`">&lt;style&gt;</code> element inside our template, we can apply CSS to elements
 in the template without affecting anything outside our component.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;hello-style-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;hello-style-template&quot;&gt;
   &lt;h1&gt;Hello, &lt;slot class=&quot;fancy&quot;&gt;world&lt;/slot&gt;!&lt;/h1&gt;
 
   &lt;style&gt;
@@ -81,29 +144,50 @@ in the template without affecting anything outside our component.</p>
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<p>Remember, every time we define a new component, we need this boilerplate:</p>
-
-<kram-code data-language="js">
-        <code class="language-js">class HelloStyleElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class HelloStyleElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;hello-style-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;hello-style-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define(&quot;hello-style&quot;, HelloStyleElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="3" language="html"><h1>Named Slots</h1>
+</code></kram-code>
+<p>Remember, every time we define a new component, we need this boilerplate:</p>
+</kram-scene>
+<kram-scene scene="4" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;greet-world&gt;
+  &lt;span slot=&quot;greeting&quot;&gt;Greetings&lt;/span&gt;
+  &lt;span slot=&quot;recipient&quot;&gt;earthlings&lt;/span&gt;
+&lt;/greet-world&gt;
+</code></kram-code><h1 slot="title">Named Slots</h1>
 
 <p>Just as a function can have more than one parameter,
 a component template can contain more than one <code data-mark-around="`">&lt;slot&gt;</code>.
 To distinguish between multiple slots, the slots need to have a <code data-mark-around="`">name</code> attribute.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;greet-world-template&quot;&gt;
+<p>To assign content to a named slot, we need to put it in an element that has a <code data-mark-around="`">slot</code> attribute.
+The value of the <code data-mark-around="`">slot</code> attribute needs to match the <code data-mark-around="`">name</code> attribute of a slot
+in the template.
+There can be at most one unnamed slot in a template definition.
+Any untagged text, or elements with no <code data-mark-around="`">slot</code> attribute, will be added to
+the unnamed slot, it it exists.</p>
+
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;greet-world-template&quot;&gt;
   &lt;h1&gt;
-    &lt;slot name=&quot;greeting&quot;&gt;Hello&lt;/slot&gt;, &lt;slot name=&quot;recipient&quot;&gt;world&lt;/slot&gt;!
+    &lt;slot name=&quot;greeting&quot;&gt;Hello&lt;/slot&gt;,
+    &lt;slot name=&quot;recipient&quot;&gt;world&lt;/slot&gt;!
   &lt;/h1&gt;
 
   &lt;style&gt;
@@ -119,34 +203,49 @@ To distinguish between multiple slots, the slots need to have a <code data-mark-
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<p>To assign content to a named slot, we need to put it in an element that has a <code data-mark-around="`">slot</code> attribute.
-The value of the <code data-mark-around="`">slot</code> attribute needs to match the <code data-mark-around="`">name</code> attribute of a slot
-in the template.
-There can be at most one unnamed slot in a template definition.
-Any untagged text, or elements with no <code data-mark-around="`">slot</code> attribute, will be added to
-the unnamed slot, it it exists.</p>
-
 <p>We are using <code data-mark-around="`">&lt;span&gt;</code> for the slot value, because the <code data-mark-around="`">&lt;slot&gt;</code> occurs in the middle of text.
 Using something other than a span may change the styling or even result in invalid markup.</p>
 
-<kram-code data-language="js">
-        <code class="language-js">class GreetWorldElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class GreetWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;greet-world-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;greet-world-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define(&quot;greet-world&quot;, GreetWorldElement);
 </code></kram-code></kram-scene>
-<kram-scene scene="4" language="html"><h1>Custom Attributes</h1>
+<kram-scene scene="5" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;arrow-button&gt;&lt;/arrow-button&gt;
+&lt;arrow-button heading=&quot;90deg&quot;&gt;&lt;/arrow-button&gt;
+&lt;arrow-button heading=&quot;180deg&quot;&gt;&lt;/arrow-button&gt;
+&lt;arrow-button heading=&quot;-90deg&quot;&gt;&lt;/arrow-button&gt;
+&lt;arrow-button heading=&quot;45deg&quot;&gt;&lt;/arrow-button&gt;
+</code></kram-code><h1 slot="title">Custom Attributes</h1>
 
 <p>Components can be defined to accept attributes, even attributes
 that do not exist in standard HTML5.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;arrow-button-template&quot;&gt;
+<p>Here we are using the CSS <code data-mark-around="`">transform</code> property to rotate the arrow icon.
+On the CSS for our component, we&rsquo;ve defined a custom property <code data-mark-around="`">--arrow-rotation</code>
+and then referenced that in the CSS rule for the <code data-mark-around="`">svg</code>.
+The last step is to copy the value of the <code data-mark-around="`">heading</code> attribute into the
+<code data-mark-around="`">--arrow-rotation</code> property.
+This cannot be done in the template, so we have to add some code to the
+Javascript class that defines our custom element.</p>
+
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;arrow-button-template&quot;&gt;
   &lt;button&gt;
     &lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
       &lt;path
@@ -168,29 +267,33 @@ that do not exist in standard HTML5.</p>
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<p>Here we are using the CSS <code data-mark-around="`">transform</code> property to rotate the arrow icon.
-On the CSS for our component, we&rsquo;ve defined a custom property <code data-mark-around="`">--arrow-rotation</code>
-and then referenced that in the CSS rule for the <code data-mark-around="`">svg</code>.
-The last step is to copy the value of the <code data-mark-around="`">heading</code> attribute into the
-<code data-mark-around="`">--arrow-rotation</code> property.
-This cannot be done in the template, so we have to add some code to the
-Javascript class that defines our custom element.</p>
-
 <p>We already have written the <code data-mark-around="`">constructor</code> for that class, but there is no
 way to access the host element&rsquo;s attributes from the constructor.
 Instead we need to use the <em data-mark-around="_">lifecycle callbacks</em> that are provided to
 us by the Web Components API.</p>
 
-<kram-code data-language="js">
-        <code class="language-js">class ArrowButtonElement extends HTMLElement {
+<p>The <code data-mark-around="`">connectedCallback</code> function is invoked each time the custom element
+is connected to a host element. In a static page, this will happen only once.
+But if the DOM is being manipulated such that the host element is moved,
+<code data-mark-around="`">connectedCallback</code> will be called again.
+Because <code data-mark-around="`">connectedCallback</code> is a member function of our custom element
+class, it can access the host element via <code data-mark-around="`">this</code>.</p>
+
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class ArrowButtonElement extends HTMLElement {
   static get observedAttributes() {
     return [&quot;heading&quot;];
   }
 
   constructor() {
     super();
-    let content = document.getElementById(&quot;arrow-button-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;arrow-button-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 
   connectedCallback() {
@@ -214,15 +317,33 @@ us by the Web Components API.</p>
 }
 
 customElements.define(&quot;arrow-button&quot;, ArrowButtonElement);
-</code></kram-code>
-<p>The <code data-mark-around="`">connectedCallback</code> function is invoked each time the custom element
-is connected to a host element. In a static page, this will happen only once.
-But if the DOM is being manipulated such that the host element is moved,
-<code data-mark-around="`">connectedCallback</code> will be called again.
-Because <code data-mark-around="`">connectedCallback</code> is a member function of our custom element
-class, it can access the host element via <code data-mark-around="`">this</code>.</p>
-</kram-scene>
-<kram-scene scene="5" language="html"><h1>An Interactive Component</h1>
+</code></kram-code></kram-scene>
+<kram-scene scene="6" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;section&gt;
+  &lt;nav class=&quot;menu-bar&quot;&gt;
+    &lt;dropdown-menu&gt;
+      File
+      &lt;ul slot=&quot;menu&quot;&gt;
+        &lt;li&gt;New&mldr;&lt;/li&gt;
+        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
+        &lt;li&gt;Open&mldr;&lt;/li&gt;
+        &lt;li&gt;Open Recent&lt;/li&gt;
+        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
+        &lt;li&gt;Save&lt;/li&gt;
+        &lt;li&gt;Save As&mldr;&lt;/li&gt;
+        &lt;li&gt;Revert to Last Saved&lt;/li&gt;
+        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
+        &lt;li&gt;Close&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/dropdown-menu&gt;
+    &lt;dropdown-menu&gt; Edit &lt;/dropdown-menu&gt;
+    &lt;dropdown-menu&gt; View &lt;/dropdown-menu&gt;
+    &lt;dropdown-menu&gt; Help &lt;/dropdown-menu&gt;
+  &lt;/nav&gt;
+&lt;/section&gt;
+</code></kram-code><h1 slot="title">An Interactive Component</h1>
 
 <p>We can define a component in HTML, and style it with CSS, but to be really useful, our component needs the ability to do something. We need to implement some interactions, and to do that, we will need Javascript.</p>
 
@@ -238,13 +359,14 @@ There are two parts to the dropdown component:</p>
 
 <p>So our component will have two slots.
 The <em data-mark-around="_">menu</em> content will always require markup, so we will make it
-a named slot. Since the <em data-mark-around="_">actuator</em> will often be untagged text, which makes it a good choice for
+a named slot. Since the <em data-mark-around="_">actuator</em> will often be untagged text, it is a good choice for
 the unnamed slot.</p>
 
 <p>First, we&rsquo;ll define a template, and some styling to handle hiding and revealing the menu. We&rsquo;ll use a checkbox to maintain the open/closed state, and wrapping the <code data-mark-around="`">&lt;label&gt;</code> for the checkbox around the actuator will allow it to control the open/closed state. No Javascript is required here.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;dropdown-menu-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;dropdown-menu-template&quot;&gt;
   &lt;input type=&quot;checkbox&quot; id=&quot;is-shown&quot; /&gt;
   &lt;label for=&quot;is-shown&quot;&gt;
     &lt;slot&gt;Menu&lt;/slot&gt;
@@ -297,13 +419,26 @@ the unnamed slot.</p>
 </code></kram-code>
 <p>The logic for closing the menu when the user clicks outside the menu can be applied from the component&rsquo;s constructor, since we have a <code data-mark-around="`">this</code> handle.</p>
 
-<kram-code data-language="js">
-        <code class="language-js">class V1DropdownElement extends HTMLElement {
+<p>Whenever the user clicks outside of our component, we want to close the menu.
+Since all clicks on the page eventually propagate up to the document element,
+we can listen for <code data-mark-around="`">&quot;click&quot;</code> events on <code data-mark-around="`">document</code>.
+But clicks within our component will also propagate to <code data-mark-around="`">document</code>.
+To check whether the event came from somewhere inside the component, we get the <code data-mark-around="`">composedPath</code>
+of the event and check whether it includes our component.</p>
+
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class V1DropdownElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;dropdown-menu-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
-    this.isShownInput = this.shadowRoot.getElementById(&quot;is-shown&quot;);
+    let content = document.getElementById(
+      &quot;dropdown-menu-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
+    this.isShownInput =
+      this.shadowRoot.getElementById(&quot;is-shown&quot;);
 
     this.clickawayHandler = (ev) =&gt; {
       if (!ev.composedPath().includes(this)) {
@@ -327,20 +462,16 @@ the unnamed slot.</p>
     if (open) {
       document.addEventListener(&quot;click&quot;, this.clickawayHandler);
     } else {
-      document.removeEventListener(&quot;click&quot;, this.clickawayHandler);
+      document.removeEventListener(
+        &quot;click&quot;,
+        this.clickawayHandler
+      );
     }
   }
 }
 
 customElements.define(&quot;dropdown-menu&quot;, V1DropdownElement);
 </code></kram-code>
-<p>Whenever the user clicks outside of our component, we want to close the menu.
-Since all clicks on the page eventually propagate up to the document element,
-we can listen for <code data-mark-around="`">&quot;click&quot;</code> events on <code data-mark-around="`">document</code>.
-But clicks within our component will also propagate to <code data-mark-around="`">document</code>.
-To check whether the event came from somewhere inside the component, we get the <code data-mark-around="`">composedPath</code>
-of the event and check whether it includes our component.</p>
-
 <p>If the click came from outside our component, we will close the menu by setting
 <code data-mark-around="`">checked = false</code> on the checkbox.
 Notice that since the <code data-mark-around="`">&lt;input&gt;</code> is in the shadow DOM, we need to access it via <code data-mark-around="`">this.shadowRoot</code>.
@@ -380,7 +511,8 @@ In the interest of localizing all the event listener code, we implement a single
 <p>Finally, we handle case 3 (as well as case 2) by calling <code data-mark-around="`">toggleClickAway</code>
 with the same value that&rsquo;s passed to <code data-mark-around="`">toggle</code>.</p>
 </kram-scene>
-<kram-scene scene="6" language="null"><h1>Styling Slotted Content</h1>
+<kram-scene scene="7" language="null"
+        ><h1 slot="title">Styling Slotted Content</h1>
 
 <p>You may have noticed that a fair amount of the CSS for <code data-mark-around="`">dropdown-menu</code> uses the <code data-mark-around="`">::slotted</code> pseudo-element, paired with selectors that target the <code data-mark-around="`">slot</code> element in the template.
 The <code data-mark-around="`">::slotted</code> pseudo-element allows a component&rsquo;s CSS to target elements which are
@@ -395,7 +527,33 @@ boundaries of the component. This violates <a href="https://en.wikipedia.org/wik
 
 <p>Let&rsquo;s see how we can solve these problems before adding more functionality to <code data-mark-around="`">dropdown-menu</code>.</p>
 </kram-scene>
-<kram-scene scene="7" language="html"><h1>Composable Components</h1>
+<kram-scene scene="8" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;section&gt;
+  &lt;nav class=&quot;menu-bar&quot;&gt;
+    &lt;dropdown-base&gt;
+      File
+      &lt;command-menu slot=&quot;layer&quot;&gt;
+        &lt;action-item&gt;New&mldr;&lt;/action-item&gt;
+        &lt;command-group&gt;
+          &lt;action-item&gt;Open&mldr;&lt;/action-item&gt;
+          &lt;action-item&gt;Open Recent&lt;/action-item&gt;
+        &lt;/command-group&gt;
+        &lt;command-group&gt;
+          &lt;action-item&gt;Save&lt;/action-item&gt;
+          &lt;action-item&gt;Save As&mldr;&lt;/action-item&gt;
+          &lt;action-item&gt;Revert to Last Saved&lt;/action-item&gt;
+        &lt;/command-group&gt;
+        &lt;action-item&gt;Close&lt;/action-item&gt;
+      &lt;/command-menu&gt;
+    &lt;/dropdown-base&gt;
+    &lt;dropdown-base&gt;Edit&lt;/dropdown-base&gt;
+    &lt;dropdown-base&gt;View&lt;/dropdown-base&gt;
+    &lt;dropdown-base&gt;Help&lt;/dropdown-base&gt;
+  &lt;/nav&gt;
+&lt;/section&gt;
+</code></kram-code><h1 slot="title">Composable Components</h1>
 
 <p>Our dropdown component should make as few assumptions about what elements are used to fill the slots. Its sole responsibility is to open and close the dropdown.</p>
 
@@ -421,8 +579,9 @@ combinatorially as more components are added.</p>
 
 <p>Let&rsquo;s design a <code data-mark-around="`">&lt;command-menu&gt;</code> component and refactor &grave;<dropdown-menu>&grave;&grave; to delegate the relevant responsibilities to the new component. We&rsquo;ll start by renaming the elements in our dropdown menu example to better reflect the responsibilities of each.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;dropdown-base-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;dropdown-base-template&quot;&gt;
   &lt;input type=&quot;checkbox&quot; id=&quot;is-shown&quot; /&gt;
   &lt;label for=&quot;is-shown&quot;&gt;
     &lt;slot&gt;&lt;button onclick=&quot;() =&gt; null&quot;&gt;Menu&lt;/button&gt;&lt;/slot&gt;
@@ -459,13 +618,19 @@ combinatorially as more components are added.</p>
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<kram-code data-language="js">
-        <code class="language-js">class DropdownBaseElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class DropdownBaseElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;dropdown-base-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
-    this.isShownInput = this.shadowRoot.getElementById(&quot;is-shown&quot;);
+    let content = document.getElementById(
+      &quot;dropdown-base-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
+    this.isShownInput =
+      this.shadowRoot.getElementById(&quot;is-shown&quot;);
 
     this.clickawayHandler = (ev) =&gt; {
       if (!ev.composedPath().includes(this)) {
@@ -489,21 +654,26 @@ combinatorially as more components are added.</p>
     if (open) {
       document.addEventListener(&quot;click&quot;, this.clickawayHandler);
     } else {
-      document.removeEventListener(&quot;click&quot;, this.clickawayHandler);
+      document.removeEventListener(
+        &quot;click&quot;,
+        this.clickawayHandler
+      );
     }
   }
 }
 
 customElements.define(&quot;dropdown-base&quot;, DropdownBaseElement);
 </code></kram-code></kram-scene>
-<kram-scene scene="8" language="null"><h1>List-like Components</h1>
+<kram-scene scene="9" language="null"
+        ><h1 slot="title">List-like Components</h1>
 
 <p>The <code data-mark-around="`">&lt;command-menu&gt;</code> component can be used as a dropdown menu, a sidebar menu, etc.
 A <code data-mark-around="`">&lt;command-group&gt;</code> allows similar menu options to be grouped together, and separated
 from the rest by a divider.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;command-menu-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;command-menu-template&quot;&gt;
   &lt;menu&gt;
     &lt;slot&gt;
       &lt;action-item&gt;Menu Item 1&lt;/action-item&gt;
@@ -560,38 +730,56 @@ from the rest by a divider.</p>
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<kram-code data-language="css">
-        <code class="language-css">command-group + command-group {
+<kram-code data-language="css"
+        ><code class="language-css"
+          >command-group + command-group {
   --command-group-display-top-hr: none;
 }
 </code></kram-code>
-<kram-code data-language="js">
-        <code class="language-js">class CommandMenuElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class CommandMenuElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;command-menu-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;command-menu-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 class CommandGroupElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;command-group-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;command-group-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define(&quot;command-menu&quot;, CommandMenuElement);
 customElements.define(&quot;command-group&quot;, CommandGroupElement);
 </code></kram-code></kram-scene>
-<kram-scene scene="9" language="html"><h1>Components that handle events</h1>
+<kram-scene scene="10" language="html"
+        ><kram-code slot="scenecode" data-language="html"
+          ><code lang="html" class="language-html"
+            >&lt;format-data name=&quot;count&quot;&gt;The count is {count}.&lt;/format-data&gt;
+&lt;action-item&gt;&uarr;&lt;/action-item&gt;
+&lt;action-item&gt;&darr;&lt;/action-item&gt;
+&lt;action-item&gt;Reset&lt;/action-item&gt;
+</code></kram-code><h1 slot="title">Components that handle events</h1>
 
 <p>The <code data-mark-around="`">&lt;action-item&gt;</code> component was originally designed to be an item in a command menu. It&rsquo;s not called <code data-mark-around="`">command-item</code> because it should work for more than commands.
 <code data-mark-around="`">&lt;action-item&gt;</code> is meant to be composable, or even used alone.</p>
 
-<kram-code data-language="html">
-        <code class="language-html">&lt;template id=&quot;action-item-template&quot;&gt;
+<kram-code data-language="html"
+        ><code class="language-html"
+          >&lt;template id=&quot;action-item-template&quot;&gt;
   &lt;button&gt;
     &lt;slot&gt;Some Action&lt;/slot&gt;
   &lt;/button&gt;
@@ -605,23 +793,30 @@ customElements.define(&quot;command-group&quot;, CommandGroupElement);
   &lt;/style&gt;
 &lt;/template&gt;
 </code></kram-code>
-<kram-code data-language="js">
-        <code class="language-js">class ActionItemElement extends HTMLElement {
+<kram-code data-language="js"
+        ><code class="language-js"
+          >class ActionItemElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(&quot;action-item-template&quot;).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(content.cloneNode(true));
+    let content = document.getElementById(
+      &quot;action-item-template&quot;
+    ).content;
+    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
+      content.cloneNode(true)
+    );
   }
 }
 
 customElements.define(&quot;action-item&quot;, ActionItemElement);
 </code></kram-code></kram-scene>
-<kram-scene scene="10" language="null"><h1>Appendix</h1>
+<kram-scene scene="11" language="null"
+        ><h1 slot="title">Appendix</h1>
 
 <p>This stuff is used in the workbook but does not warrant discussion.</p>
 
-<kram-code data-language="css">
-        <code class="language-css">/* CSS to clean up the demo */
+<kram-code data-language="css"
+        ><code class="language-css"
+          >/* CSS to clean up the demo */
 
 .menu-bar {
   display: flex;
@@ -647,51 +842,5 @@ customElements.define(&quot;action-item&quot;, ActionItemElement);
 </code></kram-code></kram-scene>
 </kram-flow>
 </kram-main>
-<script type="module">
-
-    import {register, init} from "@cre.ative/kram-11ty/runtime";
-    init({});
-  
-import("./templates.html")
-          .then((mod) => register(mod, "templates.html", "html", (resource, container) => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(resource.default, 'text/html');
-            const body = doc.body;
-            for ( let def = body.firstElementChild; def; def=body.firstElementChild ) {
-              container.appendChild(def); }
-          }))
-import("./scenes.html")
-          .then((mod) => register(mod, "scenes.html", "html", (resource, container) => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(resource.default, 'text/html');
-            const body = doc.body;
-            const scenes = Object.fromEntries(
-              Array.prototype.map.call(body.children, (node) => [
-              node && node.dataset.scene, node ])
-              .filter(([num]) => Boolean(num)));
-            return function render (n, container) {
-              const scene = scenes[n]
-              if( scene ) {
-                for( let child = scene.firstElementChild; child; child = scene.firstElementChild ) {
-                  if ( child.tagName === 'SCRIPT' ) {
-                    const text = child.firstChild
-                    scene.removeChild(child)
-                    child = document.createElement('script')
-                    child.appendChild(text)
-                  } 
-                  container.appendChild(child) 
-                }
-              } 
-            }
-          }))
-import("./styles.css")
-          .then((mod) => register(mod, "styles.css", "css", (resource, container) => {
-          let sheet = document.createElement("style");
-          sheet.innerHTML = resource.default;
-          container.appendChild(sheet);
-        }))
-import("./module.js")
-          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", null))
-</script>
 </body>
 </html>

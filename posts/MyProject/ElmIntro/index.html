@@ -6,14 +6,26 @@
 { "imports": {"@cre.ative/kram-11ty/runtime":"/modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"/modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
 <link rel="stylesheet" href="/modules/@cre.ative/kram-11ty/styles.css">
+<script type="module">
+import {init, register} from "@cre.ative/kram-11ty/runtime";
+init({"count":999,"tenth":0.1,"hello":"Hello, world"});
+import("./Main.elm")
+          .then((mod) => register(mod, "MyProject.ElmIntro.Main", "elm", null))
+import("./styles.css")
+          .then((mod) => register(mod, "Styles", "css", null))
+</script>
 </head>
 <body>
 <kram-main>
-<kram-nav>
-<span slot="title">Introduction to Elm</title>
-</kram-nav>
+<h1 slot="title">Introduction to Elm</h1>
 <kram-flow>
-<kram-scene scene="0" language="elm"><h1>Introduction</h1>
+<kram-scene scene="1" language="elm"
+        ><kram-code slot="scenecode" data-language="elm"
+          ><code lang="elm" class="language-elm"
+            >Html.div [ class &quot;hi&quot; ]
+  [Html.text hello]
+
+</code></kram-code><h1 slot="title">Introduction</h1>
 
 <p>We can write Html expressions in Elm and have them rendered.</p>
 
@@ -21,22 +33,32 @@
 
 <p>We can also pull in CSS classes and reference them using the <code data-mark-around="`">class</code> attribute.</p>
 
-<kram-code data-language="css">
-        <code class="language-css">.hi {
+<kram-code data-language="css"
+        ><code class="language-css"
+          >.hi {
   font-family: Georgia;
   color: #835cf0;
   font-size: 4rem;
 }
 </code></kram-code></kram-scene>
-<kram-scene scene="1" language="elm"><h1>Functions</h1>
+<kram-scene scene="2" language="elm"
+        ><kram-code slot="scenecode" data-language="elm"
+          ><code lang="elm" class="language-elm"
+            >Html.input
+  [ Attr.type_ &quot;number&quot;
+  , Attr.value &lt;| asString count
+  ]
+  []
+</code></kram-code><h1 slot="title">Functions</h1>
 
 <p>We can put lots of examples in the same file like this.</p>
 
 <p>We can also define &ldquo;helper&rdquo; functions to make the view more
 concise.</p>
 
-<kram-code data-language="elm">
-        <code class="language-elm">asString: Int -&gt; String
+<kram-code data-language="elm"
+        ><code class="language-elm"
+          >asString: Int -&gt; String
 asString n =
   String.fromInt n
 </code></kram-code>
@@ -45,15 +67,5 @@ that we define in the same file.</p>
 </kram-scene>
 </kram-flow>
 </kram-main>
-<script type="module">
-
-    import {register, init} from "@cre.ative/kram-11ty/runtime";
-    init({"count":999,"tenth":0.1,"hello":"Hello, world"});
-  
-import("./Main.elm")
-          .then((mod) => register(mod, "MyProject.ElmIntro.Main", "elm", null))
-import("./styles.css")
-          .then((mod) => register(mod, "Styles", "css", null))
-</script>
 </body>
 </html>

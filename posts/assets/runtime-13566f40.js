@@ -155,16 +155,9 @@ class SceneElement extends HTMLElement {
   constructor() {
     super();
 
-    let shadowRoot = this.attachShadow({ mode: "open" });
-    shadowRoot.innerHTML = `
-      <section>
-        <figure id="rendering">
-          <slot name="rendering">Nothing rendered (yet).</slot>
-        </figure>
-        <main>
-          <slot>Discussion</slot>
-        </main>
-      </section>`;
+    this.attachShadow({ mode: "open" }).appendChild(
+      SceneElement.html_template.cloneNode(true)
+    );
   }
 
   connectedCallback() {
@@ -180,6 +173,44 @@ class SceneElement extends HTMLElement {
       render(parseInt(scnum), slot);
     });
   }
+
+  static html_template = template`<section>
+    <figure id="rendering">
+      <slot name="rendering">Nothing rendered (yet).</slot>
+    </figure>
+    <main>
+      <slot>Discussion</slot>
+    </main>
+  </section><style>
+    section {
+      display: contents;
+    }
+    figure {
+      grid-column: 2 / span 2;
+      aspect-ratio: 16 / 9;
+      width: max-content;
+      height: auto;
+    }
+    main {
+      display: contents;
+    }
+    ::slotted(p) {
+      grid-column: 3 / span2;
+    }
+    ::slotted(h1) {
+      grid-column: 2;
+    }
+    ::slotted(kram-code) {
+      grid-column: 2 / span 2;
+    }
+  </style>`;
+}
+
+function template(strings, ...values) {
+  const html = strings.flatMap((s, i) => (i ? [values[i - 1], s] : [s]));
+  let tpl = document.createElement("template");
+  tpl.innerHTML = html;
+  return tpl.content;
 }
 
 export { __vitePreload as _, init as i, register as r };
