@@ -10,18 +10,23 @@
 import {init, register} from "@cre.ative/kram-11ty/runtime";
 init({"name":"Figma"});
 import("./index.jsx")
-          .then((mod) => register(mod, "index.jsx", "jsx", null))
+          .then((mod) => register(mod, "undefined", "jsx", function(resource, container, initial) {
+      if ( typeof (resource && resource.mount) === 'function' ) {
+        return resource.mount(container, initial)
+      }}))
 </script>
 </head>
 <body>
 <kram-main>
 <h1 slot="title">React-Figma Demo</h1>
-<kram-flow>
-<kram-scene scene="1" language="jsx"
-        ><kram-code slot="scenecode" data-language="jsx"
-          ><code lang="jsx" class="language-jsx"
-            >&lt;Text className=&quot;hi&quot;&gt;Hello, {name}&lt;/Text&gt;
-</code></kram-code><h1 slot="title">Hello, Figma</h1>
+<kram-toc slot="nav"><ol>
+<li data-idref="scene-1">Hello, Figma</li>
+<li data-idref="scene-2">A Simple Tag Component</li>
+</ol></kram-toc>
+<kram-flow><kram-scene 
+        scene="1" 
+        language="jsx" 
+        ><kram-code slot="scenecode" data-language="jsx"><pre class="language-jsx"><code class="language-jsx"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">Text</span></span> <span class="token attr-name">className</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>hi<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token plain-text">Hello, </span><span class="token punctuation">{</span>name<span class="token punctuation">}</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">Text</span></span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Hello, Figma</h1>
 
 <p>This workbook demonstrates how we can use React to build
 components and frames in Figma. The focus is on using React
@@ -34,13 +39,10 @@ to inject them into a Figma file as components.
 This will allow us to prove out the component APIs and ensure the
 Figma components are completely specified.</p>
 </kram-scene>
-<kram-scene scene="2" language="jsx"
-        ><kram-code slot="scenecode" data-language="jsx"
-          ><code lang="jsx" class="language-jsx"
-            >&lt;View style={tagStyles.root}&gt;
-  &lt;Text style={tagStyles.content}&gt;Tag Text&lt;/Text&gt;
-&lt;/View&gt;
-</code></kram-code><h1 slot="title">A Simple <code data-mark-around="`">Tag</code> Component</h1>
+<kram-scene 
+        scene="2" 
+        language="jsx" 
+        ><kram-code slot="scenecode" data-language="jsx"><pre class="language-jsx"><code class="language-jsx"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">View</span></span> <span class="token attr-name">style</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>tagStyles<span class="token punctuation">.</span>root<span class="token punctuation">}</span></span><span class="token punctuation">></span></span><span class="token plain-text"><br>  </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">Text</span></span> <span class="token attr-name">style</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>tagStyles<span class="token punctuation">.</span>content<span class="token punctuation">}</span></span><span class="token punctuation">></span></span><span class="token plain-text">Tag Text</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">Text</span></span><span class="token punctuation">></span></span><span class="token plain-text"><br></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">View</span></span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">A Simple <code data-mark-around="`">Tag</code> Component</h1>
 
 <p>Whenever we say &ldquo;component&rdquo;, it may be unclear whether we&rsquo;re talking
 about a <a href="https://reactjs.org/docs/react-component.html">React component</a> or a
@@ -58,21 +60,7 @@ in such a way that abstracts out the platform dependencies and focuses on what&r
 React is flexible enough, and there is tooling available to render to the web, native iOS/Android, as well as
 Figma (through <code data-mark-around="`">react-figma</code>).</p>
 
-<kram-code data-language="jsx"
-        ><code class="language-jsx"
-          >const tagStyles = StyleSheet.create({
-  root: {
-    backgroundColor: &quot;#423248&quot;,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  content: {
-    color: &quot;white&quot;,
-    fontFamily: &apos;Verdana, Futura, &quot;Trebuchet MS&quot;, sans-serif&apos;,
-  },
-});
-</code></kram-code></kram-scene>
-</kram-flow>
+<kram-code data-language="jsx"><pre class="language-jsx"><code class="language-jsx"><span class="token keyword">const</span> tagStyles <span class="token operator">=</span> StyleSheet<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">{</span><br>  <span class="token literal-property property">root</span><span class="token operator">:</span> <span class="token punctuation">{</span><br>    <span class="token literal-property property">backgroundColor</span><span class="token operator">:</span> <span class="token string">"#423248"</span><span class="token punctuation">,</span><br>    <span class="token literal-property property">paddingVertical</span><span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span><br>    <span class="token literal-property property">paddingHorizontal</span><span class="token operator">:</span> <span class="token number">8</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span><span class="token punctuation">,</span><br>  <span class="token literal-property property">content</span><span class="token operator">:</span> <span class="token punctuation">{</span><br>    <span class="token literal-property property">color</span><span class="token operator">:</span> <span class="token string">"white"</span><span class="token punctuation">,</span><br>    <span class="token literal-property property">fontFamily</span><span class="token operator">:</span> <span class="token string">'Verdana, Futura, "Trebuchet MS", sans-serif'</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene></kram-flow>
 </kram-main>
 </body>
 </html>

@@ -10,7 +10,7 @@
 import {init, register} from "@cre.ative/kram-11ty/runtime";
 init({});
 import("./templates.html")
-          .then((mod) => register(mod, "templates.html", "html", (resource, container) => {
+          .then((mod) => register(mod, "undefined", "html", (resource, container) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(resource.default, 'text/html');
             const body = doc.body;
@@ -18,7 +18,7 @@ import("./templates.html")
               container.appendChild(def); }
           }))
 import("./scenes.html")
-          .then((mod) => register(mod, "scenes.html", "html", (resource, container) => {
+          .then((mod) => register(mod, "undefined", "html", (resource, container) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(resource.default, 'text/html');
             const body = doc.body;
@@ -42,26 +42,38 @@ import("./scenes.html")
             }
           }))
 import("./styles.css")
-          .then((mod) => register(mod, "styles.css", "css", (resource, container) => {
+          .then((mod) => register(mod, "undefined", "css", (resource, container) => {
           let sheet = document.createElement("style");
           sheet.innerHTML = resource.default;
           container.appendChild(sheet);
         }))
 import("./module.js")
-          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", null))
+          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", function(resource, container, initial) {
+      if ( typeof (resource && resource.mount) === 'function' ) {
+        return resource.mount(container, initial)
+      }}))
 </script>
 </head>
 <body>
 <kram-main>
 <h1 slot="title">Web Components</h1>
-<kram-flow>
-<kram-scene scene="1" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;hello-world&gt;&lt;/hello-world&gt;
-</code></kram-code><h1 slot="title">Hello, world</h1>
-
-<p>Here is &ldquo;Hello, world&rdquo; implemented as a web component.
+<kram-toc slot="nav"><ol>
+<li data-idref="scene-1">Scene 1</li>
+<li data-idref="scene-2">Slots</li>
+<li data-idref="scene-3">Styling the template</li>
+<li data-idref="scene-4">Named Slots</li>
+<li data-idref="scene-5">Custom Attributes</li>
+<li data-idref="scene-6">An Interactive Component</li>
+<li data-idref="scene-7">Styling Slotted Content</li>
+<li data-idref="scene-8">Composable Components</li>
+<li data-idref="scene-9">List-like Components</li>
+<li data-idref="scene-10">Components that handle events</li>
+<li data-idref="scene-11">Appendix</li>
+</ol></kram-toc>
+<kram-flow><kram-scene 
+        scene="1" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hello-world</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>hello-world</span><span class="token punctuation">></span></span></code></pre></kram-code><p>Here is &ldquo;Hello, world&rdquo; implemented as a web component.
 Notice that all we need to do is reference the <code data-mark-around="`">&lt;hello-world&gt;</code> element in our HTML.</p>
 
 <p>But&mldr; <em data-mark-around="_">searches HTML standard&mldr;</em> where did this new <code data-mark-around="`">&lt;hello-world&gt;</code> element come from?
@@ -72,104 +84,45 @@ And why does it have a hyphen in the name?</p>
 and all custom elements are required to contain a hyphen in the name.
 This is to ensure that custom element names do not conflict with yet-to-be-defined HTML tags in the future.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;hello-world-template&quot;&gt;
-  &lt;h1&gt;Hello, &lt;slot&gt;world&lt;/slot&gt;!&lt;/h1&gt;
-&lt;/template&gt;
-</code></kram-code>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>hello-world-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">></span></span>Hello, <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span>world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span>!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
 <p>We define a custom element in HTML using the <code data-mark-around="`">&lt;template&gt;</code> HTML element.
 Inside the template we put whatever HTML we want to have inserted whenever the custom element is used.</p>
 
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class HelloWorldElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;hello-world-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-customElements.define(&quot;hello-world&quot;, HelloWorldElement);
-</code></kram-code>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">HelloWorldElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"hello-world-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"hello-world"</span><span class="token punctuation">,</span> HelloWorldElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code>
 <p>There&rsquo;s one more thing we need, and that is to bind our template to the tag name <code data-mark-around="`">hello-world</code> by
 registering a Javascript <code data-mark-around="`">class</code> and attaching our template in its <code data-mark-around="`">constuctor</code>.</p>
 </kram-scene>
-<kram-scene scene="2" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;hello-world&gt; web components &lt;/hello-world&gt;
-</code></kram-code><h1 slot="title">Slots</h1>
+<kram-scene 
+        scene="2" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hello-world</span><span class="token punctuation">></span></span> web components <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>hello-world</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Slots</h1>
 
 <p>Notice that the template for <code data-mark-around="`">&lt;hello-world&gt;</code> includes <code data-mark-around="`">&lt;slot&gt;</code> markup.
 Slots allow us to swap out different content each time the component is used.
 In this case, the <code data-mark-around="`">&lt;slot&gt;</code> contains the word &ldquo;world&rdquo;, so we can use this same
 template to say hello to anything.</p>
 
-<p>A slot can be thought of as a parameter to the component.
-Every time we use the component, we can assign a different value to the slot
+<blockquote><p>A slot can be thought of as a parameter to the component.</p></blockquote>
+
+<p>Every time we use the component, we can assign a different value to the slot
 by putting that value in the body of the component.</p>
 </kram-scene>
-<kram-scene scene="3" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;hello-style&gt; component style &lt;/hello-style&gt;
-
-&lt;h1&gt;This &amp;lt;H1&amp;gt; has no style&lt;/h1&gt;
-</code></kram-code><h1 slot="title">Styling the template</h1>
+<kram-scene 
+        scene="3" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hello-style</span><span class="token punctuation">></span></span> component style <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>hello-style</span><span class="token punctuation">></span></span><br><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">></span></span>This <span class="token entity named-entity" title="&lt;">&amp;lt;</span>H1<span class="token entity named-entity" title="&gt;">&amp;gt;</span> has no style<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Styling the template</h1>
 
 <p>By inserting a <code data-mark-around="`">&lt;style&gt;</code> element inside our template, we can apply CSS to elements
 in the template without affecting anything outside our component.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;hello-style-template&quot;&gt;
-  &lt;h1&gt;Hello, &lt;slot class=&quot;fancy&quot;&gt;world&lt;/slot&gt;!&lt;/h1&gt;
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>hello-style-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">></span></span>Hello, <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>fancy<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span>!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">h1</span> <span class="token punctuation">{</span><br>      <span class="token property">font-family</span><span class="token punctuation">:</span> Georgia<span class="token punctuation">;</span><br>      <span class="token property">font-size</span><span class="token punctuation">:</span> 6rem<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">.fancy</span> <span class="token punctuation">{</span><br>      <span class="token property">font-style</span><span class="token punctuation">:</span> italic<span class="token punctuation">;</span><br>      <span class="token property">color</span><span class="token punctuation">:</span> darkorange<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
+<aside> Remember, every time we define a new component, we need this boilerplate. </aside>
 
-  &lt;style&gt;
-    h1 {
-      font-family: Georgia;
-      font-size: 6rem;
-    }
-
-    .fancy {
-      font-style: italic;
-      color: darkorange;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class HelloStyleElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;hello-style-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-customElements.define(&quot;hello-style&quot;, HelloStyleElement);
-</code></kram-code>
-<p>Remember, every time we define a new component, we need this boilerplate:</p>
-</kram-scene>
-<kram-scene scene="4" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;greet-world&gt;
-  &lt;span slot=&quot;greeting&quot;&gt;Greetings&lt;/span&gt;
-  &lt;span slot=&quot;recipient&quot;&gt;earthlings&lt;/span&gt;
-&lt;/greet-world&gt;
-</code></kram-code><h1 slot="title">Named Slots</h1>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">HelloStyleElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"hello-style-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"hello-style"</span><span class="token punctuation">,</span> HelloStyleElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="4" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>greet-world</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>greeting<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Greetings<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>recipient<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>earthlings<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>greet-world</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Named Slots</h1>
 
 <p>Just as a function can have more than one parameter,
 a component template can contain more than one <code data-mark-around="`">&lt;slot&gt;</code>.
@@ -182,55 +135,18 @@ There can be at most one unnamed slot in a template definition.
 Any untagged text, or elements with no <code data-mark-around="`">slot</code> attribute, will be added to
 the unnamed slot, it it exists.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;greet-world-template&quot;&gt;
-  &lt;h1&gt;
-    &lt;slot name=&quot;greeting&quot;&gt;Hello&lt;/slot&gt;,
-    &lt;slot name=&quot;recipient&quot;&gt;world&lt;/slot&gt;!
-  &lt;/h1&gt;
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>greet-world-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>greeting<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Hello<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span>, <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>recipient<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span>!<br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">h1</span> <span class="token punctuation">{</span><br>      <span class="token property">font-family</span><span class="token punctuation">:</span> Georgia<span class="token punctuation">;</span><br>      <span class="token property">font-size</span><span class="token punctuation">:</span> 6rem<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">slot[name="recipient"]</span> <span class="token punctuation">{</span><br>      <span class="token property">font-style</span><span class="token punctuation">:</span> italic<span class="token punctuation">;</span><br>      <span class="token property">color</span><span class="token punctuation">:</span> darkorange<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
+<p>We are using <code data-mark-around="`">&lt;span&gt;</code> for the slot value, because the <code data-mark-around="`">&lt;slot&gt;</code> occurs in the middle of text.</p>
 
-  &lt;style&gt;
-    h1 {
-      font-family: Georgia;
-      font-size: 6rem;
-    }
+<aside>
+Using something other than a span may change the styling or even result in invalid markup.
+</aside>
 
-    slot[name=&quot;recipient&quot;] {
-      font-style: italic;
-      color: darkorange;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
-<p>We are using <code data-mark-around="`">&lt;span&gt;</code> for the slot value, because the <code data-mark-around="`">&lt;slot&gt;</code> occurs in the middle of text.
-Using something other than a span may change the styling or even result in invalid markup.</p>
-
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class GreetWorldElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;greet-world-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-customElements.define(&quot;greet-world&quot;, GreetWorldElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="5" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;arrow-button&gt;&lt;/arrow-button&gt;
-&lt;arrow-button heading=&quot;90deg&quot;&gt;&lt;/arrow-button&gt;
-&lt;arrow-button heading=&quot;180deg&quot;&gt;&lt;/arrow-button&gt;
-&lt;arrow-button heading=&quot;-90deg&quot;&gt;&lt;/arrow-button&gt;
-&lt;arrow-button heading=&quot;45deg&quot;&gt;&lt;/arrow-button&gt;
-</code></kram-code><h1 slot="title">Custom Attributes</h1>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">GreetWorldElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"greet-world-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"greet-world"</span><span class="token punctuation">,</span> GreetWorldElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="5" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>arrow-button</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>arrow-button</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>arrow-button</span> <span class="token attr-name">heading</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>90deg<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>arrow-button</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>arrow-button</span> <span class="token attr-name">heading</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>180deg<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>arrow-button</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>arrow-button</span> <span class="token attr-name">heading</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>-90deg<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>arrow-button</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>arrow-button</span> <span class="token attr-name">heading</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>45deg<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>arrow-button</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Custom Attributes</h1>
 
 <p>Components can be defined to accept attributes, even attributes
 that do not exist in standard HTML5.</p>
@@ -243,30 +159,7 @@ The last step is to copy the value of the <code data-mark-around="`">heading</co
 This cannot be done in the template, so we have to add some code to the
 Javascript class that defines our custom element.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;arrow-button-template&quot;&gt;
-  &lt;button&gt;
-    &lt;svg viewBox=&quot;0 0 24 24&quot;&gt;
-      &lt;path
-        fill-rule=&quot;evenodd&quot;
-        clip-rule=&quot;evenodd&quot;
-        d=&quot;M3.5 10.4853L11.9853 2L20.4706 10.4853L17.9706 12.9853L14 9.01472V22H10V8.98528L6 12.9853L3.5 10.4853Z&quot;
-      /&gt;&lt;/svg
-    &gt;&lt;slot&gt;&lt;/slot&gt;
-  &lt;/button&gt;
-
-  &lt;style&gt;
-    svg {
-      display: inline-block;
-      width: 1.5rem;
-      height: 1.5rem;
-      fill: currentColor;
-      transform: rotate(var(--arrow-rotation, 0));
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>arrow-button-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>svg</span> <span class="token attr-name">viewBox</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>0 0 24 24<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>path</span><br>        <span class="token attr-name">fill-rule</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>evenodd<span class="token punctuation">"</span></span><br>        <span class="token attr-name">clip-rule</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>evenodd<span class="token punctuation">"</span></span><br>        <span class="token attr-name">d</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>M3.5 10.4853L11.9853 2L20.4706 10.4853L17.9706 12.9853L14 9.01472V22H10V8.98528L6 12.9853L3.5 10.4853Z<span class="token punctuation">"</span></span><br>      <span class="token punctuation">/></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>svg</span><br>    <span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">svg</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> inline-block<span class="token punctuation">;</span><br>      <span class="token property">width</span><span class="token punctuation">:</span> 1.5rem<span class="token punctuation">;</span><br>      <span class="token property">height</span><span class="token punctuation">:</span> 1.5rem<span class="token punctuation">;</span><br>      <span class="token property">fill</span><span class="token punctuation">:</span> currentColor<span class="token punctuation">;</span><br>      <span class="token property">transform</span><span class="token punctuation">:</span> <span class="token function">rotate</span><span class="token punctuation">(</span><span class="token function">var</span><span class="token punctuation">(</span>--arrow-rotation<span class="token punctuation">,</span> 0<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
 <p>We already have written the <code data-mark-around="`">constructor</code> for that class, but there is no
 way to access the host element&rsquo;s attributes from the constructor.
 Instead we need to use the <em data-mark-around="_">lifecycle callbacks</em> that are provided to
@@ -279,71 +172,11 @@ But if the DOM is being manipulated such that the host element is moved,
 Because <code data-mark-around="`">connectedCallback</code> is a member function of our custom element
 class, it can access the host element via <code data-mark-around="`">this</code>.</p>
 
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class ArrowButtonElement extends HTMLElement {
-  static get observedAttributes() {
-    return [&quot;heading&quot;];
-  }
-
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;arrow-button-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-
-  connectedCallback() {
-    const heading = this.getAttribute(&quot;heading&quot;);
-
-    if (heading) {
-      this._updateRotation(heading);
-    }
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === &quot;heading&quot;) {
-      this._updateRotation(newValue);
-    }
-  }
-
-  _updateRotation(heading) {
-    const button = this.shadowRoot.firstElementChild;
-    button.style.setProperty(&quot;--arrow-rotation&quot;, heading);
-  }
-}
-
-customElements.define(&quot;arrow-button&quot;, ArrowButtonElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="6" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;section&gt;
-  &lt;nav class=&quot;menu-bar&quot;&gt;
-    &lt;dropdown-menu&gt;
-      File
-      &lt;ul slot=&quot;menu&quot;&gt;
-        &lt;li&gt;New&mldr;&lt;/li&gt;
-        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
-        &lt;li&gt;Open&mldr;&lt;/li&gt;
-        &lt;li&gt;Open Recent&lt;/li&gt;
-        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
-        &lt;li&gt;Save&lt;/li&gt;
-        &lt;li&gt;Save As&mldr;&lt;/li&gt;
-        &lt;li&gt;Revert to Last Saved&lt;/li&gt;
-        &lt;li&gt;&lt;hr /&gt;&lt;/li&gt;
-        &lt;li&gt;Close&lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/dropdown-menu&gt;
-    &lt;dropdown-menu&gt; Edit &lt;/dropdown-menu&gt;
-    &lt;dropdown-menu&gt; View &lt;/dropdown-menu&gt;
-    &lt;dropdown-menu&gt; Help &lt;/dropdown-menu&gt;
-  &lt;/nav&gt;
-&lt;/section&gt;
-</code></kram-code><h1 slot="title">An Interactive Component</h1>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">ArrowButtonElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token keyword">static</span> <span class="token keyword">get</span> <span class="token function">observedAttributes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">return</span> <span class="token punctuation">[</span><span class="token string">"heading"</span><span class="token punctuation">]</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"arrow-button-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">connectedCallback</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">const</span> heading <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">"heading"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>    <span class="token keyword">if</span> <span class="token punctuation">(</span>heading<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">_updateRotation</span><span class="token punctuation">(</span>heading<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">attributeChangedCallback</span><span class="token punctuation">(</span><span class="token parameter">name<span class="token punctuation">,</span> oldValue<span class="token punctuation">,</span> newValue</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">if</span> <span class="token punctuation">(</span>name <span class="token operator">===</span> <span class="token string">"heading"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">_updateRotation</span><span class="token punctuation">(</span>newValue<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">_updateRotation</span><span class="token punctuation">(</span><span class="token parameter">heading</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">const</span> button <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>shadowRoot<span class="token punctuation">.</span>firstElementChild<span class="token punctuation">;</span><br>    button<span class="token punctuation">.</span>style<span class="token punctuation">.</span><span class="token function">setProperty</span><span class="token punctuation">(</span><span class="token string">"--arrow-rotation"</span><span class="token punctuation">,</span> heading<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"arrow-button"</span><span class="token punctuation">,</span> ArrowButtonElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="6" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>section</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>nav</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>menu-bar<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-menu</span><span class="token punctuation">></span></span><br>      File<br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>menu<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>New<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hr</span> <span class="token punctuation">/></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Open<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Open Recent<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hr</span> <span class="token punctuation">/></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Save<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Save As<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Revert to Last Saved<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hr</span> <span class="token punctuation">/></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Close<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-menu</span><span class="token punctuation">></span></span> Edit <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-menu</span><span class="token punctuation">></span></span> View <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-menu</span><span class="token punctuation">></span></span> Help <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-menu</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>section</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">An Interactive Component</h1>
 
 <p>We can define a component in HTML, and style it with CSS, but to be really useful, our component needs the ability to do something. We need to implement some interactions, and to do that, we will need Javascript.</p>
 
@@ -364,59 +197,7 @@ the unnamed slot.</p>
 
 <p>First, we&rsquo;ll define a template, and some styling to handle hiding and revealing the menu. We&rsquo;ll use a checkbox to maintain the open/closed state, and wrapping the <code data-mark-around="`">&lt;label&gt;</code> for the checkbox around the actuator will allow it to control the open/closed state. No Javascript is required here.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;dropdown-menu-template&quot;&gt;
-  &lt;input type=&quot;checkbox&quot; id=&quot;is-shown&quot; /&gt;
-  &lt;label for=&quot;is-shown&quot;&gt;
-    &lt;slot&gt;Menu&lt;/slot&gt;
-  &lt;/label&gt;
-  &lt;slot name=&quot;menu&quot;&gt;
-    &lt;ul&gt;
-      &lt;li&gt;Command 1&lt;/li&gt;
-      &lt;li&gt;Command 2&lt;/li&gt;
-      &lt;li&gt;Command 3&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/slot&gt;
-
-  &lt;style&gt;
-    :host {
-      display: inline-block;
-      position: relative;
-    }
-
-    #is-shown {
-      display: none;
-    }
-
-    label {
-      cursor: pointer;
-    }
-
-    slot[name=&quot;menu&quot;] {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      border: 1px solid;
-    }
-
-    #is-shown:checked ~ slot[name=&quot;menu&quot;] {
-      display: block;
-    }
-
-    /* CSS for slotted elements and default slot content */
-
-    ::slotted(ul[slot=&quot;menu&quot;]),
-    slot[name=&quot;menu&quot;] &gt; ul {
-      margin: 0;
-      padding: 0.25em;
-      list-style: none;
-      white-space: nowrap;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>dropdown-menu-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>checkbox<span class="token punctuation">"</span></span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>is-shown<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>label</span> <span class="token attr-name">for</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>is-shown<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span>Menu<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>label</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>menu<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Command 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Command 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">></span></span>Command 3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">:host</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> inline-block<span class="token punctuation">;</span><br>      <span class="token property">position</span><span class="token punctuation">:</span> relative<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#is-shown</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">label</span> <span class="token punctuation">{</span><br>      <span class="token property">cursor</span><span class="token punctuation">:</span> pointer<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">slot[name="menu"]</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>      <span class="token property">position</span><span class="token punctuation">:</span> absolute<span class="token punctuation">;</span><br>      <span class="token property">top</span><span class="token punctuation">:</span> 100%<span class="token punctuation">;</span><br>      <span class="token property">left</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>      <span class="token property">border</span><span class="token punctuation">:</span> 1px solid<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#is-shown:checked ~ slot[name="menu"]</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> block<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token comment">/* CSS for slotted elements and default slot content */</span><br><br>    <span class="token selector">::slotted(ul[slot="menu"]),<br>    slot[name="menu"] > ul</span> <span class="token punctuation">{</span><br>      <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>      <span class="token property">padding</span><span class="token punctuation">:</span> 0.25em<span class="token punctuation">;</span><br>      <span class="token property">list-style</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>      <span class="token property">white-space</span><span class="token punctuation">:</span> nowrap<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
 <p>The logic for closing the menu when the user clicks outside the menu can be applied from the component&rsquo;s constructor, since we have a <code data-mark-around="`">this</code> handle.</p>
 
 <p>Whenever the user clicks outside of our component, we want to close the menu.
@@ -426,52 +207,7 @@ But clicks within our component will also propagate to <code data-mark-around="`
 To check whether the event came from somewhere inside the component, we get the <code data-mark-around="`">composedPath</code>
 of the event and check whether it includes our component.</p>
 
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class V1DropdownElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;dropdown-menu-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById(&quot;is-shown&quot;);
-
-    this.clickawayHandler = (ev) =&gt; {
-      if (!ev.composedPath().includes(this)) {
-        this.toggle(false);
-      } else {
-        ev.stopPropagation();
-      }
-    };
-
-    this.isShownInput.addEventListener(&quot;change&quot;, () =&gt;
-      this.toggleClickAway(this.isShownInput.checked)
-    );
-  }
-
-  toggle(open) {
-    this.isShownInput.checked = open;
-    this.toggleClickAway(open);
-  }
-
-  toggleClickAway(open) {
-    if (open) {
-      document.addEventListener(&quot;click&quot;, this.clickawayHandler);
-    } else {
-      document.removeEventListener(
-        &quot;click&quot;,
-        this.clickawayHandler
-      );
-    }
-  }
-}
-
-customElements.define(&quot;dropdown-menu&quot;, V1DropdownElement);
-</code></kram-code>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">V1DropdownElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"dropdown-menu-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>shadowRoot<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"is-shown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">clickawayHandler</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">ev</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span><br>      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>ev<span class="token punctuation">.</span><span class="token function">composedPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">includes</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggle</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span><br>        ev<span class="token punctuation">.</span><span class="token function">stopPropagation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><br>    <span class="token punctuation">}</span><span class="token punctuation">;</span><br><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"change"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span><br>      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggleClickAway</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span>checked<span class="token punctuation">)</span><br>    <span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">toggle</span><span class="token punctuation">(</span><span class="token parameter">open</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span>checked <span class="token operator">=</span> open<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggleClickAway</span><span class="token punctuation">(</span>open<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">toggleClickAway</span><span class="token punctuation">(</span><span class="token parameter">open</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">if</span> <span class="token punctuation">(</span>open<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>      document<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>clickawayHandler<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span><br>      document<span class="token punctuation">.</span><span class="token function">removeEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>clickawayHandler<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"dropdown-menu"</span><span class="token punctuation">,</span> V1DropdownElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code>
 <p>If the click came from outside our component, we will close the menu by setting
 <code data-mark-around="`">checked = false</code> on the checkbox.
 Notice that since the <code data-mark-around="`">&lt;input&gt;</code> is in the shadow DOM, we need to access it via <code data-mark-around="`">this.shadowRoot</code>.
@@ -511,8 +247,10 @@ In the interest of localizing all the event listener code, we implement a single
 <p>Finally, we handle case 3 (as well as case 2) by calling <code data-mark-around="`">toggleClickAway</code>
 with the same value that&rsquo;s passed to <code data-mark-around="`">toggle</code>.</p>
 </kram-scene>
-<kram-scene scene="7" language="null"
-        ><h1 slot="title">Styling Slotted Content</h1>
+<kram-scene 
+        scene="7" 
+        language="null" 
+        norender><h1 slot="title">Styling Slotted Content</h1>
 
 <p>You may have noticed that a fair amount of the CSS for <code data-mark-around="`">dropdown-menu</code> uses the <code data-mark-around="`">::slotted</code> pseudo-element, paired with selectors that target the <code data-mark-around="`">slot</code> element in the template.
 The <code data-mark-around="`">::slotted</code> pseudo-element allows a component&rsquo;s CSS to target elements which are
@@ -527,33 +265,10 @@ boundaries of the component. This violates <a href="https://en.wikipedia.org/wik
 
 <p>Let&rsquo;s see how we can solve these problems before adding more functionality to <code data-mark-around="`">dropdown-menu</code>.</p>
 </kram-scene>
-<kram-scene scene="8" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;section&gt;
-  &lt;nav class=&quot;menu-bar&quot;&gt;
-    &lt;dropdown-base&gt;
-      File
-      &lt;command-menu slot=&quot;layer&quot;&gt;
-        &lt;action-item&gt;New&mldr;&lt;/action-item&gt;
-        &lt;command-group&gt;
-          &lt;action-item&gt;Open&mldr;&lt;/action-item&gt;
-          &lt;action-item&gt;Open Recent&lt;/action-item&gt;
-        &lt;/command-group&gt;
-        &lt;command-group&gt;
-          &lt;action-item&gt;Save&lt;/action-item&gt;
-          &lt;action-item&gt;Save As&mldr;&lt;/action-item&gt;
-          &lt;action-item&gt;Revert to Last Saved&lt;/action-item&gt;
-        &lt;/command-group&gt;
-        &lt;action-item&gt;Close&lt;/action-item&gt;
-      &lt;/command-menu&gt;
-    &lt;/dropdown-base&gt;
-    &lt;dropdown-base&gt;Edit&lt;/dropdown-base&gt;
-    &lt;dropdown-base&gt;View&lt;/dropdown-base&gt;
-    &lt;dropdown-base&gt;Help&lt;/dropdown-base&gt;
-  &lt;/nav&gt;
-&lt;/section&gt;
-</code></kram-code><h1 slot="title">Composable Components</h1>
+<kram-scene 
+        scene="8" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>section</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>nav</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>menu-bar<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-base</span><span class="token punctuation">></span></span><br>      File<br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>command-menu</span> <span class="token attr-name">slot</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>layer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>New<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>command-group</span><span class="token punctuation">></span></span><br>          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Open<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Open Recent<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>command-group</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>command-group</span><span class="token punctuation">></span></span><br>          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Save<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Save As<span class="token entity named-entity" title="&hellip;">&amp;hellip;</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>          <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Revert to Last Saved<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>command-group</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Close<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>command-menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-base</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-base</span><span class="token punctuation">></span></span>Edit<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-base</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-base</span><span class="token punctuation">></span></span>View<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-base</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dropdown-base</span><span class="token punctuation">></span></span>Help<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dropdown-base</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>section</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Composable Components</h1>
 
 <p>Our dropdown component should make as few assumptions about what elements are used to fill the slots. Its sole responsibility is to open and close the dropdown.</p>
 
@@ -579,268 +294,38 @@ combinatorially as more components are added.</p>
 
 <p>Let&rsquo;s design a <code data-mark-around="`">&lt;command-menu&gt;</code> component and refactor &grave;<dropdown-menu>&grave;&grave; to delegate the relevant responsibilities to the new component. We&rsquo;ll start by renaming the elements in our dropdown menu example to better reflect the responsibilities of each.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;dropdown-base-template&quot;&gt;
-  &lt;input type=&quot;checkbox&quot; id=&quot;is-shown&quot; /&gt;
-  &lt;label for=&quot;is-shown&quot;&gt;
-    &lt;slot&gt;&lt;button onclick=&quot;() =&gt; null&quot;&gt;Menu&lt;/button&gt;&lt;/slot&gt;
-  &lt;/label&gt;
-  &lt;div id=&quot;layer&quot;&gt;
-    &lt;slot name=&quot;layer&quot;&gt;
-      &lt;command-menu&gt;
-        &lt;action-item&gt;Action Item 1&lt;/action-item&gt;
-        &lt;action-item&gt;Action Item 2&lt;/action-item&gt;
-        &lt;action-item&gt;Action Item 3&lt;/action-item&gt;
-      &lt;/command-menu&gt;
-    &lt;slot&gt;
-  &lt;/div&gt;
-
-  &lt;style&gt;
-    :host {
-      position: relative;
-    }
-
-    #is-shown {
-      display: none;
-    }
-
-    #layer {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-    }
-
-    #is-shown:checked ~ #layer {
-      display: block;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class DropdownBaseElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;dropdown-base-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById(&quot;is-shown&quot;);
-
-    this.clickawayHandler = (ev) =&gt; {
-      if (!ev.composedPath().includes(this)) {
-        this.toggle(false);
-      } else {
-        ev.stopPropagation();
-      }
-    };
-
-    this.isShownInput.addEventListener(&quot;change&quot;, () =&gt;
-      this.toggleClickAway(this.isShownInput.checked)
-    );
-  }
-
-  toggle(open) {
-    this.isShownInput.checked = open;
-    this.toggleClickAway(open);
-  }
-
-  toggleClickAway(open) {
-    if (open) {
-      document.addEventListener(&quot;click&quot;, this.clickawayHandler);
-    } else {
-      document.removeEventListener(
-        &quot;click&quot;,
-        this.clickawayHandler
-      );
-    }
-  }
-}
-
-customElements.define(&quot;dropdown-base&quot;, DropdownBaseElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="9" language="null"
-        ><h1 slot="title">List-like Components</h1>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>dropdown-base-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>checkbox<span class="token punctuation">"</span></span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>is-shown<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>label</span> <span class="token attr-name">for</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>is-shown<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token special-attr"><span class="token attr-name">onclick</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value javascript language-javascript"><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token keyword">null</span></span><span class="token punctuation">"</span></span></span><span class="token punctuation">></span></span>Menu<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>label</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>layer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>layer<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>command-menu</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Action Item 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Action Item 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Action Item 3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>command-menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">:host</span> <span class="token punctuation">{</span><br>      <span class="token property">position</span><span class="token punctuation">:</span> relative<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#is-shown</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#layer</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>      <span class="token property">position</span><span class="token punctuation">:</span> absolute<span class="token punctuation">;</span><br>      <span class="token property">top</span><span class="token punctuation">:</span> 100%<span class="token punctuation">;</span><br>      <span class="token property">left</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#is-shown:checked ~ #layer</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> block<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">DropdownBaseElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"dropdown-base-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>shadowRoot<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"is-shown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">clickawayHandler</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">ev</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span><br>      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>ev<span class="token punctuation">.</span><span class="token function">composedPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">includes</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggle</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span><br>        ev<span class="token punctuation">.</span><span class="token function">stopPropagation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><br>    <span class="token punctuation">}</span><span class="token punctuation">;</span><br><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"change"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span><br>      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggleClickAway</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span>checked<span class="token punctuation">)</span><br>    <span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">toggle</span><span class="token punctuation">(</span><span class="token parameter">open</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span>isShownInput<span class="token punctuation">.</span>checked <span class="token operator">=</span> open<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">toggleClickAway</span><span class="token punctuation">(</span>open<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><br>  <span class="token function">toggleClickAway</span><span class="token punctuation">(</span><span class="token parameter">open</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">if</span> <span class="token punctuation">(</span>open<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>      document<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>clickawayHandler<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span><br>      document<span class="token punctuation">.</span><span class="token function">removeEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>clickawayHandler<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"dropdown-base"</span><span class="token punctuation">,</span> DropdownBaseElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="9" 
+        language="null" 
+        norender><h1 slot="title">List-like Components</h1>
 
 <p>The <code data-mark-around="`">&lt;command-menu&gt;</code> component can be used as a dropdown menu, a sidebar menu, etc.
 A <code data-mark-around="`">&lt;command-group&gt;</code> allows similar menu options to be grouped together, and separated
 from the rest by a divider.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;command-menu-template&quot;&gt;
-  &lt;menu&gt;
-    &lt;slot&gt;
-      &lt;action-item&gt;Menu Item 1&lt;/action-item&gt;
-      &lt;action-item&gt;Menu Item 2&lt;/action-item&gt;
-      &lt;action-item&gt;Menu Item 3&lt;/action-item&gt;
-    &lt;/slot&gt;
-  &lt;/menu&gt;
-
-  &lt;style&gt;
-    menu {
-      display: flex;
-      flex-direction: column;
-      margin: 0;
-      padding: 0.5em;
-      gap: 0.25em;
-      list-style: none;
-      border: 1px solid;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-
-&lt;template id=&quot;command-group-template&quot;&gt;
-  &lt;hr id=&quot;top-hr&quot; /&gt;
-  &lt;ul&gt;
-    &lt;slot&gt;
-      &lt;action-item&gt;Group Item 1&lt;/action-item&gt;
-      &lt;action-item&gt;Group Item 2&lt;/action-item&gt;
-      &lt;action-item&gt;Group Item 3&lt;/action-item&gt;
-    &lt;/slot&gt;
-  &lt;/ul&gt;
-  &lt;hr /&gt;
-
-  &lt;style&gt;
-    :host {
-      --command-group-display-top-hr: block;
-    }
-
-    hr {
-      margin: 0 -0.5em 0.25em;
-    }
-
-    #top-hr {
-      display: var(--command-group-display-top-hr);
-    }
-
-    ul {
-      display: flex;
-      flex-direction: column;
-      margin: 0;
-      padding: 0 0 0.25em;
-      gap: 0.25em;
-      list-style: none;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
-<kram-code data-language="css"
-        ><code class="language-css"
-          >command-group + command-group {
-  --command-group-display-top-hr: none;
-}
-</code></kram-code>
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class CommandMenuElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;command-menu-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-class CommandGroupElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;command-group-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-customElements.define(&quot;command-menu&quot;, CommandMenuElement);
-customElements.define(&quot;command-group&quot;, CommandGroupElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="10" language="html"
-        ><kram-code slot="scenecode" data-language="html"
-          ><code lang="html" class="language-html"
-            >&lt;format-data name=&quot;count&quot;&gt;The count is {count}.&lt;/format-data&gt;
-&lt;action-item&gt;&uarr;&lt;/action-item&gt;
-&lt;action-item&gt;&darr;&lt;/action-item&gt;
-&lt;action-item&gt;Reset&lt;/action-item&gt;
-</code></kram-code><h1 slot="title">Components that handle events</h1>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>command-menu-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>menu</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Menu Item 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Menu Item 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Menu Item 3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>menu</span><span class="token punctuation">></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">menu</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> flex<span class="token punctuation">;</span><br>      <span class="token property">flex-direction</span><span class="token punctuation">:</span> column<span class="token punctuation">;</span><br>      <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>      <span class="token property">padding</span><span class="token punctuation">:</span> 0.5em<span class="token punctuation">;</span><br>      <span class="token property">gap</span><span class="token punctuation">:</span> 0.25em<span class="token punctuation">;</span><br>      <span class="token property">list-style</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>      <span class="token property">border</span><span class="token punctuation">:</span> 1px solid<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span><br><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>command-group-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hr</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>top-hr<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Group Item 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Group Item 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Group Item 3<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>hr</span> <span class="token punctuation">/></span></span><br><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">:host</span> <span class="token punctuation">{</span><br>      <span class="token property">--command-group-display-top-hr</span><span class="token punctuation">:</span> block<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">hr</span> <span class="token punctuation">{</span><br>      <span class="token property">margin</span><span class="token punctuation">:</span> 0 -0.5em 0.25em<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">#top-hr</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--command-group-display-top-hr<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br><br>    <span class="token selector">ul</span> <span class="token punctuation">{</span><br>      <span class="token property">display</span><span class="token punctuation">:</span> flex<span class="token punctuation">;</span><br>      <span class="token property">flex-direction</span><span class="token punctuation">:</span> column<span class="token punctuation">;</span><br>      <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>      <span class="token property">padding</span><span class="token punctuation">:</span> 0 0 0.25em<span class="token punctuation">;</span><br>      <span class="token property">gap</span><span class="token punctuation">:</span> 0.25em<span class="token punctuation">;</span><br>      <span class="token property">list-style</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
+<kram-code data-language="css"><pre class="language-css"><code class="language-css"><span class="token selector">command-group + command-group</span> <span class="token punctuation">{</span><br>  <span class="token property">--command-group-display-top-hr</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre></kram-code>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">CommandMenuElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"command-menu-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">class</span> <span class="token class-name">CommandGroupElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"command-group-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"command-menu"</span><span class="token punctuation">,</span> CommandMenuElement<span class="token punctuation">)</span><span class="token punctuation">;</span><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"command-group"</span><span class="token punctuation">,</span> CommandGroupElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="10" 
+        language="html" 
+        ><kram-code slot="scenecode" data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>format-data</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>count<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>The count is {count}.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>format-data</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>↑<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>↓<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>action-item</span><span class="token punctuation">></span></span>Reset<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>action-item</span><span class="token punctuation">></span></span></code></pre></kram-code><h1 slot="title">Components that handle events</h1>
 
 <p>The <code data-mark-around="`">&lt;action-item&gt;</code> component was originally designed to be an item in a command menu. It&rsquo;s not called <code data-mark-around="`">command-item</code> because it should work for more than commands.
 <code data-mark-around="`">&lt;action-item&gt;</code> is meant to be composable, or even used alone.</p>
 
-<kram-code data-language="html"
-        ><code class="language-html"
-          >&lt;template id=&quot;action-item-template&quot;&gt;
-  &lt;button&gt;
-    &lt;slot&gt;Some Action&lt;/slot&gt;
-  &lt;/button&gt;
-  &lt;style&gt;
-    button {
-      white-space: nowrap;
-      color: inherit;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  &lt;/style&gt;
-&lt;/template&gt;
-</code></kram-code>
-<kram-code data-language="js"
-        ><code class="language-js"
-          >class ActionItemElement extends HTMLElement {
-  constructor() {
-    super();
-    let content = document.getElementById(
-      &quot;action-item-template&quot;
-    ).content;
-    this.attachShadow({ mode: &quot;open&quot; }).appendChild(
-      content.cloneNode(true)
-    );
-  }
-}
-
-customElements.define(&quot;action-item&quot;, ActionItemElement);
-</code></kram-code></kram-scene>
-<kram-scene scene="11" language="null"
-        ><h1 slot="title">Appendix</h1>
+<kram-code data-language="html"><pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>action-item-template<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span><span class="token punctuation">></span></span><br>    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span><span class="token punctuation">></span></span>Some Action<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>slot</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span><br>  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css"><br>    <span class="token selector">button</span> <span class="token punctuation">{</span><br>      <span class="token property">white-space</span><span class="token punctuation">:</span> nowrap<span class="token punctuation">;</span><br>      <span class="token property">color</span><span class="token punctuation">:</span> inherit<span class="token punctuation">;</span><br>      <span class="token property">text-decoration</span><span class="token punctuation">:</span> none<span class="token punctuation">;</span><br>      <span class="token property">cursor</span><span class="token punctuation">:</span> pointer<span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span><br><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">></span></span></code></pre></kram-code>
+<kram-code data-language="js"><pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">ActionItemElement</span> <span class="token keyword">extends</span> <span class="token class-name">HTMLElement</span> <span class="token punctuation">{</span><br>  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> content <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"action-item-template"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>content<span class="token punctuation">;</span><br>    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">attachShadow</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token literal-property property">mode</span><span class="token operator">:</span> <span class="token string">"open"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>content<span class="token punctuation">.</span><span class="token function">cloneNode</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br>customElements<span class="token punctuation">.</span><span class="token function">define</span><span class="token punctuation">(</span><span class="token string">"action-item"</span><span class="token punctuation">,</span> ActionItemElement<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></kram-code></kram-scene>
+<kram-scene 
+        scene="11" 
+        language="null" 
+        norender><h1 slot="title">Appendix</h1>
 
 <p>This stuff is used in the workbook but does not warrant discussion.</p>
 
-<kram-code data-language="css"
-        ><code class="language-css"
-          >/* CSS to clean up the demo */
-
-.menu-bar {
-  display: flex;
-  position: relative;
-  gap: 4em;
-  background: #f0f0f0;
-  padding: 0 0.5em;
-}
-
-.menu-bar::after {
-  content: &quot;&quot;;
-  position: absolute;
-  height: 4px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-bottom: 4px solid #888;
-}
-
-.menu-bar &gt; * {
-  padding: 0.5em 0;
-}
-</code></kram-code></kram-scene>
-</kram-flow>
+<kram-code data-language="css"><pre class="language-css"><code class="language-css"><span class="token comment">/* CSS to clean up the demo */</span><br><br><span class="token selector">.menu-bar</span> <span class="token punctuation">{</span><br>  <span class="token property">display</span><span class="token punctuation">:</span> flex<span class="token punctuation">;</span><br>  <span class="token property">position</span><span class="token punctuation">:</span> relative<span class="token punctuation">;</span><br>  <span class="token property">gap</span><span class="token punctuation">:</span> 4em<span class="token punctuation">;</span><br>  <span class="token property">background</span><span class="token punctuation">:</span> #f0f0f0<span class="token punctuation">;</span><br>  <span class="token property">padding</span><span class="token punctuation">:</span> 0 0.5em<span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><br><span class="token selector">.menu-bar::after</span> <span class="token punctuation">{</span><br>  <span class="token property">content</span><span class="token punctuation">:</span> <span class="token string">""</span><span class="token punctuation">;</span><br>  <span class="token property">position</span><span class="token punctuation">:</span> absolute<span class="token punctuation">;</span><br>  <span class="token property">height</span><span class="token punctuation">:</span> 4px<span class="token punctuation">;</span><br>  <span class="token property">left</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>  <span class="token property">right</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>  <span class="token property">bottom</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><br>  <span class="token property">border-bottom</span><span class="token punctuation">:</span> 4px solid #888<span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><br><span class="token selector">.menu-bar > *</span> <span class="token punctuation">{</span><br>  <span class="token property">padding</span><span class="token punctuation">:</span> 0.5em 0<span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre></kram-code></kram-scene></kram-flow>
 </kram-main>
 </body>
 </html>

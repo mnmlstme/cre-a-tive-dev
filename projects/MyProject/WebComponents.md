@@ -3,8 +3,6 @@ title: Web Components
 platform: web-standard
 ---
 
-# Hello, world
-
 Here is "Hello, world" implemented as a web component.
 Notice that all we need to do is reference the `<hello-world>` element in our HTML.
 
@@ -33,12 +31,8 @@ Inside the template we put whatever HTML we want to have inserted whenever the c
 class HelloWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "hello-world-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("hello-world-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -61,7 +55,8 @@ template to say hello to anything.
 <hello-world> web components </hello-world>
 ```
 
-A slot can be thought of as a parameter to the component.
+> A slot can be thought of as a parameter to the component.
+
 Every time we use the component, we can assign a different value to the slot
 by putting that value in the body of the component.
 
@@ -96,23 +91,19 @@ in the template without affecting anything outside our component.
 </template>
 ```
 
+<aside> Remember, every time we define a new component, we need this boilerplate. </aside>
+
 ```js
 class HelloStyleElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "hello-style-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("hello-style-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
 customElements.define("hello-style", HelloStyleElement);
 ```
-
-Remember, every time we define a new component, we need this boilerplate:
 
 ---
 
@@ -139,8 +130,7 @@ the unnamed slot, it it exists.
 ```html
 <template id="greet-world-template">
   <h1>
-    <slot name="greeting">Hello</slot>,
-    <slot name="recipient">world</slot>!
+    <slot name="greeting">Hello</slot>, <slot name="recipient">world</slot>!
   </h1>
 
   <style>
@@ -158,18 +148,17 @@ the unnamed slot, it it exists.
 ```
 
 We are using `<span>` for the slot value, because the `<slot>` occurs in the middle of text.
+
+<aside>
 Using something other than a span may change the styling or even result in invalid markup.
+</aside>
 
 ```js
 class GreetWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "greet-world-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("greet-world-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -243,12 +232,8 @@ class ArrowButtonElement extends HTMLElement {
 
   constructor() {
     super();
-    let content = document.getElementById(
-      "arrow-button-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("arrow-button-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 
   connectedCallback() {
@@ -292,13 +277,13 @@ There are two parts to the dropdown component:
     <dropdown-menu>
       File
       <ul slot="menu">
-        <li>New…</li>
+        <li>New&hellip;</li>
         <li><hr /></li>
-        <li>Open…</li>
+        <li>Open&hellip;</li>
         <li>Open Recent</li>
         <li><hr /></li>
         <li>Save</li>
-        <li>Save As…</li>
+        <li>Save As&hellip;</li>
         <li>Revert to Last Saved</li>
         <li><hr /></li>
         <li>Close</li>
@@ -384,14 +369,9 @@ of the event and check whether it includes our component.
 class V1DropdownElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "dropdown-menu-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById("dropdown-menu-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    this.isShownInput = this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -415,10 +395,7 @@ class V1DropdownElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener(
-        "click",
-        this.clickawayHandler
-      );
+      document.removeEventListener("click", this.clickawayHandler);
     }
   }
 }
@@ -486,14 +463,14 @@ Let's see how we can solve these problems before adding more functionality to `d
     <dropdown-base>
       File
       <command-menu slot="layer">
-        <action-item>New…</action-item>
+        <action-item>New&hellip;</action-item>
         <command-group>
-          <action-item>Open…</action-item>
+          <action-item>Open&hellip;</action-item>
           <action-item>Open Recent</action-item>
         </command-group>
         <command-group>
           <action-item>Save</action-item>
-          <action-item>Save As…</action-item>
+          <action-item>Save As&hellip;</action-item>
           <action-item>Revert to Last Saved</action-item>
         </command-group>
         <action-item>Close</action-item>
@@ -573,14 +550,9 @@ Let's design a `<command-menu>` component and refactor `<dropdown-menu>`` to del
 class DropdownBaseElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "dropdown-base-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById("dropdown-base-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    this.isShownInput = this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -604,10 +576,7 @@ class DropdownBaseElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener(
-        "click",
-        this.clickawayHandler
-      );
+      document.removeEventListener("click", this.clickawayHandler);
     }
   }
 }
@@ -692,24 +661,16 @@ command-group + command-group {
 class CommandMenuElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "command-menu-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("command-menu-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
 class CommandGroupElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "command-group-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("command-group-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -751,12 +712,8 @@ The `<action-item>` component was originally designed to be an item in a command
 class ActionItemElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "action-item-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("action-item-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 

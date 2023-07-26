@@ -12,9 +12,9 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
     "@11ty/eleventy-plugin-vite": "^4.0.0",
-    "@cre.ative/kram": "file:.yalc/@cre.ative/kram",
-    "@cre.ative/kram-11ty": "file:.yalc/@cre.ative/kram-11ty",
+    "@cre.ative/kram-11ty": "^1.5.1",
     "@cre.ative/kram-elm": "^1.5.0",
     "@cre.ative/kram-react-native": "^1.5.0",
     "@cre.ative/kram-react-redux": "^1.5.0",

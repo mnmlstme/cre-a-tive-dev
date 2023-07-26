@@ -6,12 +6,8 @@
 class HelloWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "hello-world-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("hello-world-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -21,12 +17,8 @@ customElements.define("hello-world", HelloWorldElement);
 class HelloStyleElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "hello-style-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("hello-style-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -36,12 +28,8 @@ customElements.define("hello-style", HelloStyleElement);
 class GreetWorldElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "greet-world-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("greet-world-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -55,12 +43,8 @@ class ArrowButtonElement extends HTMLElement {
 
   constructor() {
     super();
-    let content = document.getElementById(
-      "arrow-button-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("arrow-button-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 
   connectedCallback() {
@@ -89,14 +73,9 @@ customElements.define("arrow-button", ArrowButtonElement);
 class V1DropdownElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "dropdown-menu-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById("dropdown-menu-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    this.isShownInput = this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -120,10 +99,7 @@ class V1DropdownElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener(
-        "click",
-        this.clickawayHandler
-      );
+      document.removeEventListener("click", this.clickawayHandler);
     }
   }
 }
@@ -134,14 +110,9 @@ customElements.define("dropdown-menu", V1DropdownElement);
 class DropdownBaseElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "dropdown-base-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
-    this.isShownInput =
-      this.shadowRoot.getElementById("is-shown");
+    let content = document.getElementById("dropdown-base-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
+    this.isShownInput = this.shadowRoot.getElementById("is-shown");
 
     this.clickawayHandler = (ev) => {
       if (!ev.composedPath().includes(this)) {
@@ -165,10 +136,7 @@ class DropdownBaseElement extends HTMLElement {
     if (open) {
       document.addEventListener("click", this.clickawayHandler);
     } else {
-      document.removeEventListener(
-        "click",
-        this.clickawayHandler
-      );
+      document.removeEventListener("click", this.clickawayHandler);
     }
   }
 }
@@ -179,24 +147,16 @@ customElements.define("dropdown-base", DropdownBaseElement);
 class CommandMenuElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "command-menu-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("command-menu-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
 class CommandGroupElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "command-group-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("command-group-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
@@ -207,12 +167,8 @@ customElements.define("command-group", CommandGroupElement);
 class ActionItemElement extends HTMLElement {
   constructor() {
     super();
-    let content = document.getElementById(
-      "action-item-template"
-    ).content;
-    this.attachShadow({ mode: "open" }).appendChild(
-      content.cloneNode(true)
-    );
+    let content = document.getElementById("action-item-template").content;
+    this.attachShadow({ mode: "open" }).appendChild(content.cloneNode(true));
   }
 }
 
