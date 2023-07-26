@@ -25,7 +25,7 @@ module.exports = function (eleventyConfig) {
     "md",
     kram11ty.configure({
       input: "./projects",
-      output: "./posts",
+      output: "./docs",
       template: "./src/template/post.html",
       platforms: {
         "react-redux": "@cre.ative/kram-react-redux",
@@ -37,7 +37,7 @@ module.exports = function (eleventyConfig) {
   return {
     dir: {
       input: "projects/",
-      output: "posts",
+      output: "docs",
     },
   };
 };

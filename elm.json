@@ -1,7 +1,7 @@
 {
   "type": "application",
   "elm-version": "0.19.1",
-  "source-directories": ["posts"],
+  "source-directories": ["docs"],
   "dependencies": {
     "direct": {
       "elm/browser": "1.0.2",

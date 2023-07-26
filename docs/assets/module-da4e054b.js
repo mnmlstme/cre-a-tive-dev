@@ -1,7 +1,7 @@
 // module Kram_81736e8a_word-wrap (ES6)
           
-          console.log('Loading module "Kram_81736e8a_word-wrap"')
-          export function Program ({connectStore, initializeStore}) {
+          console.log('Loading module "Kram_81736e8a_word-wrap"');
+          function Program ({connectStore, initializeStore}) {
             // JS Definition from scene 1
 function lineBreakCost(words, maxWidth, costFn) {
   const slack = maxWidth - lineWidth(words);
@@ -298,7 +298,7 @@ customElements.define("word-wrap", WordWrapElement);
               
             })
           }
-          export function mount (mountpoint, initial) {
+          function mount (mountpoint, initial) {
             let Store = {
               root: Object.assign({}, initial),
             };
@@ -311,8 +311,10 @@ customElements.define("word-wrap", WordWrapElement);
                 set: (key, value) => root[key] = value,
                 keys: () => Object.keys(root),
               })};
-            const program = Program({connectStore})
+            const program = Program({connectStore});
             return (n, container) => {
-              program[n-1].call(container)
+              program[n-1].call(container);
             }
           }
+
+export { Program, mount };

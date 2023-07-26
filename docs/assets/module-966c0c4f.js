@@ -1,7 +1,7 @@
 // module Kram_e2bdb492_WebComponents (ES6)
           
-          console.log('Loading module "Kram_e2bdb492_WebComponents"')
-          export function Program ({connectStore, initializeStore}) {
+          console.log('Loading module "Kram_e2bdb492_WebComponents"');
+          function Program ({connectStore, initializeStore}) {
             // JS Definition from scene 1
 class HelloWorldElement extends HTMLElement {
   constructor() {
@@ -178,7 +178,7 @@ customElements.define("action-item", ActionItemElement);
               
             })
           }
-          export function mount (mountpoint, initial) {
+          function mount (mountpoint, initial) {
             let Store = {
               root: Object.assign({}, initial),
             };
@@ -191,8 +191,10 @@ customElements.define("action-item", ActionItemElement);
                 set: (key, value) => root[key] = value,
                 keys: () => Object.keys(root),
               })};
-            const program = Program({connectStore})
+            const program = Program({connectStore});
             return (n, container) => {
-              program[n-1].call(container)
+              program[n-1].call(container);
             }
           }
+
+export { Program, mount };
