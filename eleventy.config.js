@@ -29,7 +29,7 @@ module.exports = function (eleventyConfig) {
       template: "./src/template/post.html",
       platforms: {
         "react-redux": "@cre.ative/kram-react-redux",
-        elm: "@cre.ative/kram-elm",
+        // elm: "@cre.ative/kram-elm",
       },
     })
   );

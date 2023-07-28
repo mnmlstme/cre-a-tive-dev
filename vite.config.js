@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import elm from "vite-plugin-elm";
+// import elm from "vite-plugin-elm";
 
 const htmlImport = {
   name: "htmlImport",
@@ -22,6 +22,8 @@ const htmlImport = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "./",
+
   build: {
     target: "esnext",
     minify: false,
@@ -31,5 +33,9 @@ export default defineConfig({
     disabled: true,
   },
 
-  plugins: [htmlImport, react(), elm({ debug: false, optimize: false })],
+  plugins: [
+    htmlImport,
+    react(),
+    // elm({ debug: false, optimize: false })
+  ],
 });

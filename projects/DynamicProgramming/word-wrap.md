@@ -63,6 +63,7 @@ function itemizedCosts(lines, maxWidth, costFn) {
 ## The Greedy algorithm
 
 ```html
+<h2>The Greedy Algorithm</h2>
 <word-wrap algo="greedy" width="25">
   We hold these truths to be self-evident, that all people are created equal,
   that they are endowed by their Creator with certain unalienable Rights, that
@@ -103,6 +104,7 @@ function logSolution(algo, lines, ...args) {
 ## The (Brute Force) Recursive algorithm
 
 ```html
+<h2>The Recursive (Brute Force) Algorithm</h2>
 <word-wrap algo="brute" width="25">
   We hold these truths to be self-evident, that all people are created equal.
 </word-wrap>
@@ -195,6 +197,7 @@ function wordWrapBrute(words, maxWidth, costFn) {
 ## The Memoized (DP) Algorithm
 
 ```html
+<h2>Dynamic Programming — Memoized Recursive</h2>
 <word-wrap algo="memo" width="25">
   We hold these truths to be self-evident, that all people are created equal,
   that they are endowed by their Creator with certain unalienable Rights, that
@@ -279,6 +282,7 @@ function wordWrapMemo(words, maxWidth, costFn) {
 ## The Tabulation (DP) Algorithm
 
 ```html
+<h2>Dynamic Programming — Tabulation</h2>
 <word-wrap algo="tab" width="25">
   We hold these truths to be self-evident, that all people are created equal,
   that they are endowed by their Creator with certain unalienable Rights, that
@@ -386,7 +390,7 @@ function wordWrapTabular(words, maxWidth, costFn) {
 
 ---
 
-## The testing component
+## The testing framework
 
 ```html
 <template id="word-wrap-template">
@@ -398,6 +402,8 @@ function wordWrapTabular(words, maxWidth, costFn) {
     <h3>Output:</h3>
     <pre id="output"></pre>
     <ul id="costing"></ul>
+    <h3>Execution Time:</h3>
+    <p id="timing">Running…</p>
   </section>
   <style>
     :host {
@@ -408,6 +414,9 @@ function wordWrapTabular(words, maxWidth, costFn) {
       grid-template-columns: auto 1fr 1fr;
       align-items: baseline;
       gap: 2rem;
+    }
+    h3 {
+      grid-column-start: 1;
     }
     pre#input {
       grid-column-end: span 2;
@@ -438,6 +447,29 @@ function wordWrapTabular(words, maxWidth, costFn) {
 ```
 
 ```js
+function perfRun(thunk) {
+  const start = performance.now();
+  let iterations = 1;
+  const result = thunk();
+  let time = performance.now() - start;
+
+  if (time < 1) {
+    iterations = 100;
+  } else if (time < 10) {
+    iterations = 10;
+  }
+
+  for (let i = 1; i < iterations; i++) {
+    thunk();
+  }
+
+  time = performance.now() - start;
+
+  return { result, avgTime: time / iterations, iterations };
+}
+```
+
+```js
 class WordWrapElement extends HTMLElement {
   constructor() {
     super();
@@ -451,6 +483,7 @@ class WordWrapElement extends HTMLElement {
     const input = this.shadowRoot.getElementById("input");
     const output = this.shadowRoot.getElementById("output");
     const costing = this.shadowRoot.getElementById("costing");
+    const timing = this.shadowRoot.getElementById("timing");
     const text = (this.textContent || input.textContent).trim();
     console.log("Text input:", text);
     const words = text.split(/\s+/);
@@ -458,7 +491,8 @@ class WordWrapElement extends HTMLElement {
     const fn = WordWrapElement.algorithms[algo] || wordWrapTabular;
     const maxWidth = width ? parseInt(width) : 40;
     const costFn = (k) => k * k;
-    const lines = fn(words, maxWidth, costFn);
+    const run = perfRun(() => fn(words, maxWidth, costFn));
+    const lines = run.result;
     const costs = itemizedCosts(lines, maxWidth, costFn);
 
     if (width) {
@@ -466,8 +500,11 @@ class WordWrapElement extends HTMLElement {
     }
 
     output.textContent = lines.map((list) => list.join(" ")).join("\n");
-
     costing.replaceChildren(...costs);
+    timing.textContent =
+      run.iterations > 1
+        ? `${run.avgTime}ms (avg over ${run.iterations} runs)`
+        : `${run.avgTime}ms`;
   }
 
   static algorithms = {

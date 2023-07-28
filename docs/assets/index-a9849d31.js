@@ -1,7 +1,7 @@
-import { i as init, _ as __vitePreload, r as register } from './runtime-8c3b144e.js';
+import { i as init, _ as __vitePreload, r as register } from './runtime-822ccb0e.js';
 
 init({});
-__vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.t),true?[]:void 0)
+__vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.a),true?[]:void 0,import.meta.url)
           .then((mod) => register(mod, "undefined", "html", (resource, container) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(resource.default, 'text/html');
@@ -9,7 +9,7 @@ __vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.t),true?[]:void 0
             for ( let def = body.firstElementChild; def; def=body.firstElementChild ) {
               container.appendChild(def); }
           }));
-__vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.s),true?[]:void 0)
+__vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.b),true?[]:void 0,import.meta.url)
           .then((mod) => register(mod, "undefined", "html", (resource, container) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(resource.default, 'text/html');
@@ -33,8 +33,14 @@ __vitePreload(() => import('./scenes-149eb9fc.js').then(n => n.s),true?[]:void 0
               } 
             }
           }));
-__vitePreload(() => import('./module-da4e054b.js'),true?[]:void 0)
-          .then((mod) => register(mod, "Kram_81736e8a_word-wrap", "js", function(resource, container, initial) {
+__vitePreload(() => Promise.resolve({}),true?["./styles-bee8a168.css"]:void 0,import.meta.url)
+          .then((mod) => register(mod, "undefined", "css", (resource, container) => {
+          let sheet = document.createElement("style");
+          sheet.innerHTML = resource.default;
+          container.appendChild(sheet);
+        }));
+__vitePreload(() => import('./module-966c0c4f.js'),true?[]:void 0,import.meta.url)
+          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", function(resource, container, initial) {
       if ( typeof (resource && resource.mount) === 'function' ) {
         return resource.mount(container, initial)
       }}));

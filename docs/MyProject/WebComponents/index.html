@@ -2,15 +2,57 @@
 <html>
 <head>
 <title>Web Components</title>
-
-
-
 <script type="importmap">
-{ "imports": {"@cre.ative/kram-11ty/runtime":"/modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"/modules/@cre.ative/kram-11ty/styles.css"} }
+{ "imports": {"@cre.ative/kram-11ty/runtime":"../../modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"../../modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
-  <script type="module" crossorigin src="/assets/index-279913bf.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/runtime-8c3b144e.js">
-  <link rel="stylesheet" href="/assets/runtime-4d830ee7.css">
+<link rel="stylesheet" href="../../modules/@cre.ative/kram-11ty/styles.css">
+<script type="module">
+import {init, register} from "@cre.ative/kram-11ty/runtime";
+init({});
+import("./templates.html")
+          .then((mod) => register(mod, "undefined", "html", (resource, container) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(resource.default, 'text/html');
+            const body = doc.body;
+            for ( let def = body.firstElementChild; def; def=body.firstElementChild ) {
+              container.appendChild(def); }
+          }))
+import("./scenes.html")
+          .then((mod) => register(mod, "undefined", "html", (resource, container) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(resource.default, 'text/html');
+            const body = doc.body;
+            const scenes = Object.fromEntries(
+              Array.prototype.map.call(body.children, (node) => [
+              node && node.dataset.scene, node ])
+              .filter(([num]) => Boolean(num)));
+            return function render (n, container) {
+              const scene = scenes[n]
+              if( scene ) {
+                for( let child = scene.firstElementChild; child; child = scene.firstElementChild ) {
+                  if ( child.tagName === 'SCRIPT' ) {
+                    const text = child.firstChild
+                    scene.removeChild(child)
+                    child = document.createElement('script')
+                    child.appendChild(text)
+                  } 
+                  container.appendChild(child) 
+                }
+              } 
+            }
+          }))
+import("./styles.css")
+          .then((mod) => register(mod, "undefined", "css", (resource, container) => {
+          let sheet = document.createElement("style");
+          sheet.innerHTML = resource.default;
+          container.appendChild(sheet);
+        }))
+import("./module.js")
+          .then((mod) => register(mod, "Kram_e2bdb492_WebComponents", "js", function(resource, container, initial) {
+      if ( typeof (resource && resource.mount) === 'function' ) {
+        return resource.mount(container, initial)
+      }}))
+</script>
 </head>
 <body>
 <kram-main>

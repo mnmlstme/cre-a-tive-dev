@@ -2,15 +2,24 @@
 <html>
 <head>
 <title>`style` Considered Harmful</title>
-
-
-
 <script type="importmap">
-{ "imports": {"@cre.ative/kram-11ty/runtime":"/modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"/modules/@cre.ative/kram-11ty/styles.css"} }
+{ "imports": {"@cre.ative/kram-11ty/runtime":"../../modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"../../modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
-  <script type="module" crossorigin src="/assets/index-f01c93a8.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/runtime-8c3b144e.js">
-  <link rel="stylesheet" href="/assets/runtime-4d830ee7.css">
+<link rel="stylesheet" href="../../modules/@cre.ative/kram-11ty/styles.css">
+<script type="module">
+import {init, register} from "@cre.ative/kram-11ty/runtime";
+init({"btnText":"Button"});
+import("./index.jsx")
+          .then((mod) => register(mod, "undefined", "jsx", function(resource, container, initial) {
+      if ( typeof (resource && resource.mount) === 'function' ) {
+        return resource.mount(container, initial)
+      }}))
+import("./styles.css")
+          .then((mod) => register(mod, "undefined", "css", function(resource, container, initial) {
+      if ( typeof (resource && resource.mount) === 'function' ) {
+        return resource.mount(container, initial)
+      }}))
+</script>
 </head>
 <body>
 <kram-main>

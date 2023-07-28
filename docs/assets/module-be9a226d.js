@@ -252,6 +252,28 @@ function wordWrapTabular(words, maxWidth, costFn) {
 }
 
 // JS Definition from scene 6
+function perfRun(thunk) {
+  const start = performance.now();
+  let iterations = 1;
+  const result = thunk();
+  let time = performance.now() - start;
+
+  if (time < 1) {
+    iterations = 100;
+  } else if (time < 10) {
+    iterations = 10;
+  }
+
+  for (let i = 1; i < iterations; i++) {
+    thunk();
+  }
+
+  time = performance.now() - start;
+
+  return { result, avgTime: time / iterations, iterations };
+}
+
+// JS Definition from scene 6
 class WordWrapElement extends HTMLElement {
   constructor() {
     super();
@@ -265,6 +287,7 @@ class WordWrapElement extends HTMLElement {
     const input = this.shadowRoot.getElementById("input");
     const output = this.shadowRoot.getElementById("output");
     const costing = this.shadowRoot.getElementById("costing");
+    const timing = this.shadowRoot.getElementById("timing");
     const text = (this.textContent || input.textContent).trim();
     console.log("Text input:", text);
     const words = text.split(/\s+/);
@@ -272,7 +295,8 @@ class WordWrapElement extends HTMLElement {
     const fn = WordWrapElement.algorithms[algo] || wordWrapTabular;
     const maxWidth = width ? parseInt(width) : 40;
     const costFn = (k) => k * k;
-    const lines = fn(words, maxWidth, costFn);
+    const run = perfRun(() => fn(words, maxWidth, costFn));
+    const lines = run.result;
     const costs = itemizedCosts(lines, maxWidth, costFn);
 
     if (width) {
@@ -280,8 +304,11 @@ class WordWrapElement extends HTMLElement {
     }
 
     output.textContent = lines.map((list) => list.join(" ")).join("\n");
-
     costing.replaceChildren(...costs);
+    timing.textContent =
+      run.iterations > 1
+        ? `${run.avgTime}ms (avg over ${run.iterations} runs)`
+        : `${run.avgTime}ms`;
   }
 
   static algorithms = {

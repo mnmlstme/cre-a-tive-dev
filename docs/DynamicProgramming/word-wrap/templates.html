@@ -1,4 +1,4 @@
-export default `<html>
+<html>
           <body>
             <template id="word-wrap-template">
   <section>
@@ -9,6 +9,8 @@ export default `<html>
     <h3>Output:</h3>
     <pre id="output"></pre>
     <ul id="costing"></ul>
+    <h3>Execution Time:</h3>
+    <p id="timing">Running…</p>
   </section>
   <style>
     :host {
@@ -19,6 +21,9 @@ export default `<html>
       grid-template-columns: auto 1fr 1fr;
       align-items: baseline;
       gap: 2rem;
+    }
+    h3 {
+      grid-column-start: 1;
     }
     pre#input {
       grid-column-end: span 2;
@@ -48,4 +53,4 @@ export default `<html>
 </template>
 
           </body>
-        </html>`
+        </html>
