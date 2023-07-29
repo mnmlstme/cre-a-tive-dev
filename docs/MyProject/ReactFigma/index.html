@@ -2,19 +2,15 @@
 <html>
 <head>
 <title>React-Figma Demo</title>
+
+
+
 <script type="importmap">
 { "imports": {"@cre.ative/kram-11ty/runtime":"../../modules/@cre.ative/kram-11ty/runtime.mjs","@cre.ative/kram-11ty/styles":"../../modules/@cre.ative/kram-11ty/styles.css"} }
 </script>
-<link rel="stylesheet" href="../../modules/@cre.ative/kram-11ty/styles.css">
-<script type="module">
-import {init, register} from "@cre.ative/kram-11ty/runtime";
-init({"name":"Figma"});
-import("./index.jsx")
-          .then((mod) => register(mod, "undefined", "jsx", function(resource, container, initial) {
-      if ( typeof (resource && resource.mount) === 'function' ) {
-        return resource.mount(container, initial)
-      }}))
-</script>
+  <script type="module" crossorigin src="/assets/index-5ef54038.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/runtime-2607a40c.js">
+  <link rel="stylesheet" href="/assets/runtime-40ecf344.css">
 </head>
 <body>
 <kram-main>

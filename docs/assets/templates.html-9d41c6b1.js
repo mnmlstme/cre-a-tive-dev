@@ -1,4 +1,4 @@
-<html>
+const t=`<html>
           <body>
             <template id="word-wrap-template">
   <section>
@@ -53,4 +53,4 @@
 </template>
 
           </body>
-        </html>
+        </html>`;export{t as default};

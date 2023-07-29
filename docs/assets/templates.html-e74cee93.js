@@ -1,4 +1,4 @@
-<html>
+const t=`<html>
           <body>
             <template id="hello-world-template">
   <h1>Hello, <slot>world</slot>!</h1>
@@ -220,4 +220,4 @@
 </template>
 
           </body>
-        </html>
+        </html>`;export{t as default};

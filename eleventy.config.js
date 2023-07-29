@@ -13,9 +13,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("projects/**/FILES/*.*");
 
   eleventyConfig.addPlugin(vitePlugin, {
-    viteOptions: {
-      configFile: "./vite.config.js",
-    },
+    viteOptions: {},
   });
 
   eleventyConfig.addPlugin(syntaxHighlight);

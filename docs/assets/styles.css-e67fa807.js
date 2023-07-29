@@ -1,4 +1,4 @@
-/* Kram: CSS in Scene 9 */
+const e=`/* Kram: CSS in Scene 9 */
 command-group + command-group {
   --command-group-display-top-hr: none;
 }
@@ -27,3 +27,4 @@ command-group + command-group {
 .menu-bar > * {
   padding: 0.5em 0;
 }
+`;export{e as default};
