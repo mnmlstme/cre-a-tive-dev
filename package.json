@@ -15,7 +15,7 @@
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
     "@11ty/eleventy-plugin-vite": "^4.0.0",
-    "@cre.ative/kram-11ty": "^1.6.0",
+    "@cre.ative/kram-11ty": "^1.6.1",
     "@cre.ative/kram-elm": "^1.5.0",
     "@cre.ative/kram-react-native": "^1.5.0",
     "@cre.ative/kram-react-redux": "^1.5.0",
@@ -23,5 +23,6 @@
     "http-server": "^14.1.1",
     "react-native": "^0.71.7",
     "vite-plugin-elm": "^2.8.0"
-  }
+  },
+  "dependencies": {}
 }

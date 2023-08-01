@@ -1,4 +1,4 @@
-const e=`<html>
+const scenes_html = `<html>
             <body><div data-scene="1"><word-wrap width="25">
   We hold these truths to be self-evident, that all people are created equal,
   that they are endowed by their Creator with certain unalienable Rights, that
@@ -31,4 +31,6 @@ const e=`<html>
   among these are Life, Liberty and the pursuit of Happiness.
 </word-wrap>
 </div></body>
-            </html>`;export{e as default};
+            </html>`;
+
+export { scenes_html as default };

@@ -1,1 +1,0 @@
-import{i as _,_ as e,r as m}from"./runtime-2607a40c.js";_({name:"Figma"});e(()=>import("./index-279432d6.js"),["assets/index-279432d6.js","assets/react-is.production.min-463c7a8a.js"]).then(t=>m(t,"undefined","jsx",function(i,n,o){if(typeof(i&&i.mount)=="function")return i.mount(n,o)}));

@@ -13,7 +13,14 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("projects/**/FILES/*.*");
 
   eleventyConfig.addPlugin(vitePlugin, {
-    viteOptions: {},
+    viteOptions: {
+      mode: "development",
+      build: {
+        modulePreload: false,
+        minify: false,
+        target: "esnext",
+      },
+    },
   });
 
   eleventyConfig.addPlugin(syntaxHighlight);

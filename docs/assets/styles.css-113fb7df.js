@@ -1,4 +1,4 @@
-const e=`/* Kram: CSS in Scene 9 */
+const styles_css = `/* Kram: CSS in Scene 9 */
 command-group + command-group {
   --command-group-display-top-hr: none;
 }
@@ -27,4 +27,6 @@ command-group + command-group {
 .menu-bar > * {
   padding: 0.5em 0;
 }
-`;export{e as default};
+`;
+
+export { styles_css as default };

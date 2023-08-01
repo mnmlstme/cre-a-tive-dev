@@ -1,34 +1,8 @@
----
-title: Better Word Wrap for the Web
-platform: web-standard
----
-
-```html
-<word-wrap width="25">
-  We hold these truths to be self-evident, that all people are created equal,
-  that they are endowed by their Creator with certain unalienable Rights, that
-  among these are Life, Liberty and the pursuit of Happiness.
-</word-wrap>
-```
-
-The word wrap problem is to optimize the line breaks in a paragraph of text, such that
-_ breaks occur only between words
-_ no line is longer than a given width, and \* minimize the raggedness of the right edge according to some cost function.
-Following Knuth's algorithm in TeX, we will build a custom element that improves on the browser's built-in greedy algorithm by applying dynamic programming.
-
-First some simplifying assumptions:
-
-1. monospace font
-2. no hyphenation
-3. all lines equal length
-4. last line not justified
-
-Because we use a monospace font, we don't need to ask the browser for the width of each word. We can also use `<pre>` to display the result.
-
-We will give each line break a cost of <math>s<sup>2</sup></math> where <math>s</math>
-is the number of spaces left at the end of the line before the break.
-
-```js
+// module Kram_81736e8a_word-wrap (ES6)
+          
+          console.log('Loading module "Kram_81736e8a_word-wrap"');
+          function Program ({connectStore, initializeStore}) {
+            // JS Definition from scene 1
 function lineBreakCost(words, maxWidth, costFn) {
   const slack = maxWidth - lineWidth(words);
 
@@ -56,22 +30,8 @@ function itemizedCosts(lines, maxWidth, costFn) {
 
   return costs.concat([totalCost]).map(makeItem);
 }
-```
 
----
-
-## The Greedy algorithm
-
-```html
-<h2>The Greedy Algorithm</h2>
-<word-wrap algo="greedy" width="25">
-  We hold these truths to be self-evident, that all people are created equal,
-  that they are endowed by their Creator with certain unalienable Rights, that
-  among these are Life, Liberty and the pursuit of Happiness.
-</word-wrap>
-```
-
-```js
+// JS Definition from scene 2
 function wordWrapGreedy(words, maxWidth) {
   let lines = [];
   let remainingWidth = maxWidth;
@@ -90,36 +50,14 @@ function wordWrapGreedy(words, maxWidth) {
 
   return logSolution("greedy", lines);
 }
-```
 
-```js
+// JS Definition from scene 2
 function logSolution(algo, lines, ...args) {
   // console.log(`=> ${algo} Subproblem[${args.join(",")}] solved: `, lines);
   return lines;
 }
-```
 
----
-
-## The (Brute Force) Recursive algorithm
-
-```html
-<h2>The Recursive (Brute Force) Algorithm</h2>
-<word-wrap algo="brute" width="25">
-  We hold these truths to be self-evident, that all people are created equal.
-</word-wrap>
-```
-
-In the brute force algorithm, we do an exhaustive search for the lowest-cost solution.
-Whenever we have the option to break or not, we recurse to two subproblems:
-
-1. Break the line, and start the next line with the current word
-2. Insert the word on the current line, and move to the next word.
-
-After computing the costs on each subproblem, compare them and compare the cost of each,
-after accounting for the cost of the line break in choice 1.
-
-```js
+// JS Definition from scene 3
 function wordWrapBrute(words, maxWidth, costFn) {
   return wordWrapRecursive().lines;
 
@@ -190,25 +128,8 @@ function wordWrapBrute(words, maxWidth, costFn) {
     };
   }
 }
-```
 
----
-
-## The Memoized (DP) Algorithm
-
-```html
-<h2>Dynamic Programming — Memoized Recursive</h2>
-<word-wrap algo="memo" width="25">
-  We hold these truths to be self-evident, that all people are created equal,
-  that they are endowed by their Creator with certain unalienable Rights, that
-  among these are Life, Liberty and the pursuit of Happiness.
-</word-wrap>
-```
-
-Since the brute force algorithm demonstrates both Optimal Substructure and
-Overlapping Subproblems, we can use dynamic programming techniques to optimize it
-
-```js
+// JS Definition from scene 4
 function wordWrapMemo(words, maxWidth, costFn) {
   let cache = words.map(() => []);
   const makeMemo = (i, k, value) =>
@@ -275,52 +196,8 @@ function wordWrapMemo(words, maxWidth, costFn) {
     });
   }
 }
-```
 
----
-
-## The Tabulation (DP) Algorithm
-
-```html
-<h2>Dynamic Programming — Tabulation</h2>
-<word-wrap algo="tab" width="25">
-  We hold these truths to be self-evident, that all people are created equal,
-  that they are endowed by their Creator with certain unalienable Rights, that
-  among these are Life, Liberty and the pursuit of Happiness.
-</word-wrap>
-```
-
-The memoized algorithm is fairly natural to express because it can be derived
-directly from the recursive solution.
-However, in some cases, an alternative formulation called the tabulation method
-can be considered a "better fit" for the application requirements.
-
-In our recursive word wrap algorithm,
-the base case--where the recursion bottoms out--was the _last word_ of the paragraph.
-But think about the word processing use case for a moment.
-People enter a paragraph of text starting with the first word, not the last word.
-If we are writing a WYSIWYG word processor--or even a text editor with word wrap--
-we want to reprocess the current paragraph every time a new word--even a new character--
-is entered.
-
-With our previous memoized algorithm, adding a word at the end of an paragraph
-which has already been processed, invalidates all cached subproblem results.
-The algorithm cannot be applied _incrementally_, and as more words are added,
-the time required grows.
-In fact the total time spent to process all revisions of the paragraph bumps the
-time complexity from O(N^2) to O(N^3).
-
-To solve this, we can reformulate the problem so that its base case is the _first word_
-of the paragraph, and each subproblem consists of adding a word at the end.
-This way, all the work we do solving smaller subproblems is still valid and
-can be used when solving the next larger subproblem.
-
-We start by pre-computing--and extending as words are added--a sparse matrix
-<math>lc<sub>i, j</sub></math> which maintains the cost of a line containing words <math>i</math>
-through <math>j</math>. This matrix is sparse because <math>i ≤ j</math> and we can
-also exclude any combinations of <math>(i, j)</math> where the words would not fit on one line.
-
-```js
+// JS Definition from scene 5
 function computeLineCosts(words, maxWidth, costFn) {
   let lc = [];
 
@@ -340,21 +217,8 @@ function computeLineCosts(words, maxWidth, costFn) {
   // console.log("computeLineCosts: lc=", lc);
   return lc;
 }
-```
 
-With <math>lc</math> computed, we can now compute the solution with optimal cost <math>c<sub>j</sub></math>
-for first <math>j</math> words for increasing values of <math>j</math>, using
-only the <math>lc</math> values and previous values of <math>c<sub>j</sub></math>.
-
-The idea is that when computing <math>c<sub>j</sub></math>, we need to decide
-(optimally) how many words to place on the last line of a paragraph containing
-<math>j</math> words.
-We already know from <math>lc<sub>i, j</sub></math> the cost of
-all possible lines ending with word <math>j</math>.
-And we've already solved <math>c<sub>i</sub></math> for <math>i ≤ j</math>,
-which we can use to optimally set the previous lines.
-
-```js
+// JS Definition from scene 5
 function wordWrapTabular(words, maxWidth, costFn) {
   const lc = computeLineCosts(words, maxWidth, costFn);
   let solution = [];
@@ -386,67 +250,8 @@ function wordWrapTabular(words, maxWidth, costFn) {
 
   return solution[words.length - 1].lines;
 }
-```
 
----
-
-## The testing framework
-
-```html
-<template id="word-wrap-template">
-  <section>
-    <h3>Input:</h3>
-    <pre id="input"><slot> 
-      Enter some particularly interesting text here.
-    </slot></pre>
-    <h3>Output:</h3>
-    <pre id="output"></pre>
-    <ul id="costing"></ul>
-    <h3>Execution Time:</h3>
-    <p id="timing">Running…</p>
-  </section>
-  <style>
-    :host {
-      --width-to-wrap: 40;
-    }
-    section {
-      display: grid;
-      grid-template-columns: auto 1fr 1fr;
-      align-items: baseline;
-      gap: 2rem;
-    }
-    h3 {
-      grid-column-start: 1;
-    }
-    pre#input {
-      grid-column-end: span 2;
-      max-width: 80ch;
-      white-space: normal;
-    }
-    pre#output {
-      border: 1px dotted black;
-      width: calc(var(--width-to-wrap) * 1ch);
-      line-height: 1.5;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      text-align: right;
-      width: fit-content;
-    }
-    li + li:not(:last-child)::before {
-      content: "+ ";
-      display: inline;
-    }
-    li:last-child {
-      border-top: 1px solid;
-      font-weight: bold;
-    }
-  </style>
-</template>
-```
-
-```js
+// JS Definition from scene 6
 function promiseRun(thunk, runMultipleIterations) {
   return new Promise((resolve, reject) => {
     const start = performance.now();
@@ -471,9 +276,8 @@ function promiseRun(thunk, runMultipleIterations) {
     resolve({ result, avgTime: time / iterations, iterations });
   });
 }
-```
 
-```js
+// JS Definition from scene 6
 class WordWrapElement extends HTMLElement {
   constructor() {
     super();
@@ -520,4 +324,28 @@ class WordWrapElement extends HTMLElement {
 }
 
 customElements.define("word-wrap", WordWrapElement);
-```
+
+            return ({
+              
+            })
+          }
+          function mount (mountpoint, initial) {
+            let Store = {
+              root: Object.assign({}, initial),
+            };
+            const connectStore = (path = ["root"]) => {
+              let root = Store;
+              path.forEach((key) => root = root[key]);
+              return ({
+                root,
+                get: (key) => root[key],
+                set: (key, value) => root[key] = value,
+                keys: () => Object.keys(root),
+              })};
+            const program = Program({connectStore});
+            return (n, container) => {
+              program[n-1].call(container);
+            }
+          }
+
+export { Program, mount };

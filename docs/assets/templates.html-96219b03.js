@@ -1,4 +1,4 @@
-const t=`<html>
+const templates_html = `<html>
           <body>
             <template id="word-wrap-template">
   <section>
@@ -53,4 +53,6 @@ const t=`<html>
 </template>
 
           </body>
-        </html>`;export{t as default};
+        </html>`;
+
+export { templates_html as default };

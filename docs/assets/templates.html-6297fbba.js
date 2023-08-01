@@ -1,4 +1,4 @@
-const t=`<html>
+const templates_html = `<html>
           <body>
             <template id="hello-world-template">
   <h1>Hello, <slot>world</slot>!</h1>
@@ -220,4 +220,6 @@ const t=`<html>
 </template>
 
           </body>
-        </html>`;export{t as default};
+        </html>`;
+
+export { templates_html as default };
